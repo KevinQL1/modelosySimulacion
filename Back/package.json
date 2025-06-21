@@ -1,0 +1,11 @@
+{
+  "name": "modelos-y-simulacion",
+  "version": "1.0.0",
+  "description": "This is an application that simulates the times of each video available to the user.",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "serverless deploy"
+  },
+  "author": "Kevin Quintero",
+  "license": "ISC"
+}
