@@ -1,15 +1,11 @@
-module.exports = class DataTimeEntity {
+module.exports = class GroupEntity {
     constructor({
         id,
-        idUser,
-        nameActivity,
-        /*AGREGA LAS PROPIEDADES DE LA TABLA QUE HAGAN FALTA*/
+        name,
         createdAt = new Date().toISOString(),
     }) {
         this.id = id
-        this.idUser = idUser
-        this.nameActivity = nameActivity
-        /*AGREGA LAS PROPIEDADES DE LA TABLA QUE HAGAN FALTA*/
+        this.name = name
         this.createdAt = createdAt || createdAt.toISOString()
         this.validate()
     }
@@ -20,9 +16,7 @@ module.exports = class DataTimeEntity {
         }
 
         if (this.name === '' || this.name === undefined) {
-            throw new Error('idUser is required')
+            throw new Error('name is required')
         }
-
-        /*AGREGA LAS VALIDACIONES DE LAS PROPIEDADES QUE HAGAN FALTA*/
     }
 }

@@ -7,5 +7,12 @@
     "deploy": "serverless deploy"
   },
   "author": "Kevin Quintero",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^2.22.0",
+    "@aws-sdk/client-dynamodb": "^3.830.0",
+    "@aws-sdk/util-dynamodb": "^3.830.0",
+    "busboy": "^1.6.0",
+    "xlsx": "^0.18.5"
+  }
 }
