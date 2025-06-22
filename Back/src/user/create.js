@@ -1,4 +1,5 @@
 const UserService = require('../common/services/UserService');
+const tokenVerification = require('../../utils/tokenVerification');
 const httpResponse = require('../../utils/httpResponse');
 const logger = require('../../utils/logger');
 const XLSX = require('xlsx');
@@ -38,15 +39,24 @@ const parseSheetFromEvent = (event) => {
 
 const createUser = async (event) => {
     try {
+        const userService = new UserService();
+
+        const user = tokenVerification(event);
+        if (!user || user.scope !== 'administrador') {
+            logger.error('Usuario no autorizado para crear usuarios');
+            return httpResponse.unauthorized(new Error('No tienes permiso para crear usuarios'))(event.requestContext.path);
+        }
+
         const usersData = parseSheetFromEvent(event);
         logger.info('Usuarios obtenidos', usersData);
-        const userService = new UserService();
+
         const results = [];
 
         for (const user of Object.values(usersData)) {
             const userObject = {
                 id: user.cedula?.toString(),
-                name: user.nombre
+                name: user.nombre,
+                scope: user.rol
             };
             logger.info('Usuarios a crear', userObject);
 

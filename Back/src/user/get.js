@@ -1,9 +1,16 @@
 const UserService = require('../common/services/UserService')
+const tokenVerification = require('../../utils/tokenVerification');
 const httpResponse = require('../../utils/httpResponse');
 const logger = require('../../utils/logger');
 
 const getUsers = async (event) => {
   try {
+    const user = tokenVerification(event);
+    if (!user || user.scope !== 'administrador') {
+      logger.error('Usuario no autorizado para obtener usuarios');
+      return httpResponse.unauthorized(new Error('No tienes permiso para obtener usuarios'))(event.requestContext.path);
+    }
+
     const userService = new UserService();
     const queryParams = event.queryStringParameters || {};
     const { cedula, nombre } = queryParams;

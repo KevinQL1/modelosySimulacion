@@ -1,4 +1,5 @@
 const CourseService = require('../../common/services/CourseService')
+const tokenVerification = require('../../../utils/tokenVerification');
 const httpResponse = require('../../../utils/httpResponse');
 const logger = require('../../../utils/logger');
 
@@ -8,15 +9,21 @@ const getCourse = async (event) => {
         const queryParams = event.queryStringParameters || {};
         const { id, curso } = queryParams;
 
+        const user = tokenVerification(event);
+        if (!user || user.scope !== 'administrador') {
+            logger.error('Usuario no autorizado para obtener cursos');
+            return httpResponse.unauthorized(new Error('No tienes permiso para obtener cursos'))(event.requestContext.path);
+        }
+
         let res
         if (id) {
             logger.info('id', id);
             res = await courseService.getCourseById(id);
         } else if (curso) {
             logger.info('curso', curso);
-           res = await courseService.getCourse(curso);
+            res = await courseService.getCourse(curso);
         } else res = await courseService.getAllItems();
-        
+
 
         logger.info('respuesta', res);
         return httpResponse.ok(res)

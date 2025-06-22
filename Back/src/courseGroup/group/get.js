@@ -1,4 +1,5 @@
 const GroupService = require('../../common/services/GroupService')
+const tokenVerification = require('../../../utils/tokenVerification');
 const httpResponse = require('../../../utils/httpResponse');
 const logger = require('../../../utils/logger');
 
@@ -7,6 +8,12 @@ const getGroup = async (event) => {
         const groupService = new GroupService()
         const queryParams = event.queryStringParameters || {};
         const { id, grupo } = queryParams;
+
+        const user = tokenVerification(event);
+        if (!user || user.scope !== 'administrador') {
+            logger.error('Usuario no autorizado para obtener grupos');
+            return httpResponse.unauthorized(new Error('No tienes permiso para obtener grupos'))(event.requestContext.path);
+        }
 
         let res
         if (id) {
