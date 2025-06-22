@@ -3,9 +3,11 @@ const httpResponse = require('../../utils/httpResponse');
 const logger = require('../../utils/logger');
 
 const deleteUser = async (event) => {
+    const { cedula } = event.queryStringParameters;
+    logger.info('Cedula obtenida', cedula);
     try {
         const userService = new UserService()
-        const res = await userService.deleteEntity(event.pathParameters.cedula);
+        const res = await userService.deleteEntity(cedula);
 
         logger.info('Usuario eliminado correctamente', res);
         return httpResponse.ok(res)

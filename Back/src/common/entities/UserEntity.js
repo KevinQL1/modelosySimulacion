@@ -20,9 +20,5 @@ module.exports = class UserEntity {
         if (this.name === '' || this.name === undefined) {
             throw new Error('name is required')
         }
-
-        if (this.scope === '' || this.scope === undefined) {
-            throw new Error('scope is required')
-        }
     }
 }

@@ -1,7 +1,3 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: kevin
-# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
-app: modelos-y-simulacion
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: modelos-y-simulacion
 
@@ -17,14 +13,18 @@ provider:
           Action:
             - dynamodb:*
           Resource:
-            - arn:aws:dynamodb:sa-east-1:588924165581:table/ch-users
-            - arn:aws:dynamodb:sa-east-1:588924165581:table/ch-data-time
-            - arn:aws:dynamodb:sa-east-1:588924165581:table/ch-courses
-            - arn:aws:dynamodb:sa-east-1:588924165581:table/ch-groups
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time/index/nameActivity-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups/index/name-index
 
 # CREACION DE LAS FUNCIONES LAMBDA
 functions:
-#### LOGIN #####
+  #### LOGIN #####
   login:
     handler: Back/src/login/login.handler
     name: login
@@ -34,7 +34,7 @@ functions:
           path: /login
           method: post
 
-#### USER #####
+  #### USER #####
   createUser:
     handler: Back/src/user/create.handler
     name: createUser
@@ -59,38 +59,38 @@ functions:
     description: This function delete a user.
     events:
       - httpApi:
-          path: /user/delete/{id}
+          path: /user/delete
           method: delete
 
-#### GROUP #####
-  createGroup:
+  #### GROUP #####
+  createNewGroup:
     handler: Back/src/courseGroup/group/createGroup.handler
-    name: createGroup
+    name: createNewGroup
     description: This function creates a new group.
     events:
       - httpApi:
           path: /group/create
           method: post
 
-  getGroup:
+  obtainGroup:
     handler: Back/src/courseGroup/group/get.handler
-    name: getGroup
+    name: obtainGroup
     description: This function obtain a group.
     events:
       - httpApi:
           path: /group/obtain
           method: get
 
-  deleteGroup:
+  deleteGroupByName:
     handler: Back/src/courseGroup/group/deleteGroupByName.handler
-    name: deleteGroup
+    name: deleteGroupByName
     description: This function delete a group.
     events:
       - httpApi:
-          path: /group/delete/{name}
+          path: /group/delete
           method: delete
 
-#### COURSE #####
+  #### COURSE #####
   createCourse:
     handler: Back/src/courseGroup/course/createCourse.handler
     name: createCourse
@@ -102,7 +102,7 @@ functions:
 
   getCourse:
     handler: Back/src/courseGroup/course/get.handler
-    name: getGroup
+    name: getCourse
     description: This function obtain a course.
     events:
       - httpApi:
@@ -115,7 +115,7 @@ functions:
     description: This function delete a course.
     events:
       - httpApi:
-          path: /course/delete/{name}
+          path: /course/delete
           method: delete
 
 # CREACION DE TABLAS EN DYNAMODB
@@ -131,40 +131,43 @@ resources:
             AttributeType: S
           - AttributeName: name
             AttributeType: S
-          - AttributeName: scope
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    CoursesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ch-courses
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: name
             AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: name
-            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
     GroupsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ch-courses
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-          - AttributeName: name
-            AttributeType: S
-          - AttributeName: nameGroup
-            AttributeType: S
-          - AttributeName: teacher
-            AttributeType: S
-          - AttributeName: schedule
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-          - AttributeName: name
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
-
-    InfobipTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
         TableName: ch-groups
+        BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -173,24 +176,31 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: name
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
 
-    MessageTable:
+    DataTimeTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ch-data-time
+        BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
-            AttributeType: S
-          - AttributeName: idUser
             AttributeType: S
           - AttributeName: nameActivity
             AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
-          - AttributeName: idUser
-            KeyType: RANGE
-        BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: nameActivity-index
+            KeySchema:
+              - AttributeName: nameActivity
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL

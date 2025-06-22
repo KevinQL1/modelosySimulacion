@@ -3,26 +3,35 @@ const {
     GetItemCommand,
     PutItemCommand,
     DeleteItemCommand,
-    ScanCommand
+    ScanCommand,
+    QueryCommand
 } = require('@aws-sdk/client-dynamodb');
-const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
-const logger = require('./utils/logger');
+const { marshall } = require('@aws-sdk/util-dynamodb');
+const logger = require('../../../utils/logger');
 
 class DynamoDbAdapter {
     constructor() {
-        const region = process.env.REGION || 'us-east-1';
+        const region = process.env.REGION || 'sa-east-1';
         this.ddb = new DynamoDBClient({ region });
     }
 
     async createOrUpdateItem(tableName, item) {
-        const params = {
-            TableName: tableName,
-            Item: marshall(item)
-        };
+        const marshalledEntity = marshall(item, {
+            convertClassInstanceToMap: true,
+            removeUndefinedValues: true
+        })
 
         try {
-            await this.ddb.send(new PutItemCommand(params));
+            const command = new PutItemCommand({
+                Item: marshalledEntity,
+                TableName: tableName,
+                ReturnValues: 'ALL_OLD'
+            })
+
+            const response = await this.ddb.send(command)
+
             logger.info('Item creado correctamente', { tableName, item });
+            return response
         } catch (error) {
             logger.error('Error al crear el item', { error });
             throw error;
@@ -30,24 +39,33 @@ class DynamoDbAdapter {
     }
 
     async getItemById(tableName, key) {
-        const params = {
-            TableName: tableName,
-            Key: marshall(key)
-        };
-
         try {
-            const { Item } = await this.ddb.send(new GetItemCommand(params));
-            if (!Item) {
-                logger.warn('Item no encontrado', { key });
-                return null;
-            }
-            logger.info('Item obtenido correctamente', { item: Item });
-            return unmarshall(Item);
+            const command = new GetItemCommand({
+                Key: marshall(key),
+                TableName: tableName
+            })
+            const response = await this.ddb.send(command)
+
+            logger.info('Item obtenido correctamente', { item: response.Item });
+            return response
         } catch (error) {
             logger.error('Error al obtener el item', { error });
-            throw error;
+            throw new Error(`Failed to query DynamoDB item: ${JSON.stringify(error)}`)
         }
     }
+
+    async getItemBySecondIndex(params) {
+    try {
+        const command = new QueryCommand(params);
+
+        const response = await this.ddb.send(command);
+        logger.info('Item obtenido correctamente', { item: response.Items });
+        return response
+    } catch (error) {
+        logger.error('Error al obtener item', { error });
+        throw new Error(`Failed to get item: ${error}`);
+    }
+}
 
     async deleteItem(tableName, key) {
         const params = {

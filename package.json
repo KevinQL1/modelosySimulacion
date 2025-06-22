@@ -4,7 +4,7 @@
   "description": "This is an application that simulates the times of each video available to the user.",
   "main": "handler.js",
   "scripts": {
-    "deploy": "serverless deploy"
+    "deploy": "serverless deploy --verbose"
   },
   "author": "Kevin Quintero",
   "license": "ISC",

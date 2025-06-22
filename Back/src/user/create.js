@@ -1,65 +1,66 @@
 const UserService = require('../common/services/UserService');
 const httpResponse = require('../../utils/httpResponse');
 const logger = require('../../utils/logger');
-const Busboy = require('busboy');
 const XLSX = require('xlsx');
 
-const parseExcelFromEvent = (event) => {
-    return new Promise((resolve, reject) => {
-        const busboy = Busboy({
-            headers: event.headers
-        });
+const parseExcelBuffer = (event) => {
+    const buffer = Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8');
+    const workbook = XLSX.read(buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    logger.info('Datos obtenidos del Excel', data);
+    return data;
+};
 
-        const chunks = [];
+const parseCsvBuffer = (event) => {
+    const buffer = Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8');
+    const workbook = XLSX.read(buffer, { type: 'buffer', raw: true, codepage: 65001 });
+    const sheetName = workbook.SheetNames[0];
+    const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    logger.info('Datos obtenidos del CSV', data);
+    return data;
+};
 
-        busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-            file.on('data', (data) => chunks.push(data));
-            file.on('end', () => logger.info(`Archivo recibido: ${filename}`));
-        });
+const parseSheetFromEvent = (event) => {
+    const contentType = event.headers['content-type'] || event.headers['Content-Type'];
+    logger.info('event parseSheetFromEvent', event);
 
-        busboy.on('finish', () => {
-            try {
-                const buffer = Buffer.concat(chunks);
-                const workbook = XLSX.read(buffer, { type: 'buffer' });
-                const sheetName = workbook.SheetNames[0];
-                const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    if (contentType.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+        return parseExcelBuffer(event);
+    }
 
-                resolve(data);
-            } catch (err) {
-                reject(err);
-            }
-        });
+    if (contentType.includes('text/csv')) {
+        return parseCsvBuffer(event);
+    }
 
-        busboy.on('error', (err) => reject(err));
-
-        // Simula stream desde el cuerpo base64
-        const bodyBuffer = Buffer.from(event.body, event.isBase64Encoded ? 'base64' : 'utf8');
-        busboy.end(bodyBuffer);
-    });
+    throw new Error(`Unsupported content type: ${contentType}`);
 };
 
 const createUser = async (event) => {
     try {
-        const usersData = await parseExcelFromEvent(event);
+        const usersData = parseSheetFromEvent(event);
+        logger.info('Usuarios obtenidos', usersData);
         const userService = new UserService();
         const results = [];
 
-        for (const user of usersData) {
+        for (const user of Object.values(usersData)) {
             const userObject = {
                 id: user.cedula?.toString(),
                 name: user.nombre
             };
+            logger.info('Usuarios a crear', userObject);
+
             const res = await userService.createEntity(userObject);
             results.push(res);
         }
 
-        logger.info('Usuarios creados', results);
+        logger.info('Usuarios creados correctamente', results);
         return httpResponse.ok({ mensaje: 'Usuarios creados correctamente', resultados: results });
 
     } catch (error) {
-        logger.error('Error creando usuarios desde Excel', error);
-        return httpResponse.badRequest(new Error('Error al procesar el Excel: ' + error.message))(event.requestContext.path);
+        logger.error('Error creando usuarios desde archivo', error);
+        return httpResponse.badRequest(new Error('Error al procesar el archivo: ' + error.message))(event.requestContext?.path || '');
     }
 };
 
-module.exports.handler = createUser;
+module.exports.handler = createUser
