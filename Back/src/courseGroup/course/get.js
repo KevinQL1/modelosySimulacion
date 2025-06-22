@@ -6,15 +6,19 @@ const getCourse = async (event) => {
     try {
         const courseService = new CourseService()
         const queryParams = event.queryStringParameters || {};
-        const { curso } = queryParams;
+        const { id, curso } = queryParams;
 
         let res
-        if (curso) {
+        if (id) {
+            logger.info('id', id);
+            res = await courseService.getCourseById(id);
+        } else if (curso) {
+            logger.info('curso', curso);
            res = await courseService.getCourse(curso);
         } else res = await courseService.getAllItems();
         
 
-        logger.info('curso', res);
+        logger.info('respuesta', res);
         return httpResponse.ok(res)
     } catch (error) {
         logger.error('Error obteniendo curso', error);

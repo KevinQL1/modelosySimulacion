@@ -6,15 +6,19 @@ const getGroup = async (event) => {
     try {
         const groupService = new GroupService()
         const queryParams = event.queryStringParameters || {};
-        const { grupo } = queryParams;
+        const { id, grupo } = queryParams;
 
         let res
-        if (grupo) {
-           res = await groupService.getGroup(grupo);
+        if (id) {
+            logger.info('id', id);
+            res = await groupService.getGroupById(id);
+        } else if (grupo) {
+            logger.info('grupo', grupo);
+            res = await groupService.getItemByName(grupo);
         } else res = await groupService.getAllItems();
-        
 
-        logger.info('grupo', res);
+
+        logger.info('respuesta', res);
         return httpResponse.ok(res)
     } catch (error) {
         logger.error('Error obteniendo grupo', error);

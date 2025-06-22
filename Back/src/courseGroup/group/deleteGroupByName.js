@@ -3,12 +3,14 @@ const httpResponse = require('../../../utils/httpResponse');
 const logger = require('../../../utils/logger');
 
 const deleteGroup = async (event) => {
+    const { grupo } = event.queryStringParameters;
+    logger.info('Grupo obtenida', grupo);
     try {
         const groupService = new GroupService()
-        const res = await groupService.deleteEntity(event.pathParameters.grupo);
+        const res = await groupService.deleteEntity(grupo);
 
         logger.info('grupo eliminado correctamente', res);
-        return httpResponse.ok(res)
+        return httpResponse.ok({message: 'Grupo eliminado correctamente'})
     } catch (error) {
         logger.error('Error eliminando grupo', error);
         return httpResponse.badRequest(new Error('Error al eliminar grupo: ' + error.message))(event.requestContext.path);

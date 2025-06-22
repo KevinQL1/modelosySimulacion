@@ -10,7 +10,7 @@ const deleteUser = async (event) => {
         const res = await userService.deleteEntity(cedula);
 
         logger.info('Usuario eliminado correctamente', res);
-        return httpResponse.ok(res)
+        return httpResponse.ok({message: 'Usuario eliminado correctamente'})
     } catch (error) {
         logger.error('Error eliminando usuario', error);
         return httpResponse.badRequest(new Error('Error al eliminar usuario: ' + error.message))(event.requestContext.path);
