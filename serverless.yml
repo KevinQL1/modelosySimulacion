@@ -1,0 +1,206 @@
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: modelos-y-simulacion
+
+# CONFIGURACION DE AWS LA REGION Y EN QUE ENTORNO ESTA REALIZADO
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: sa-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time/index/nameActivity-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups/index/name-index
+
+# CREACION DE LAS FUNCIONES LAMBDA
+functions:
+  #### LOGIN #####
+  login:
+    handler: Back/src/login/login.handler
+    name: login
+    description: This function login a user.
+    events:
+      - httpApi:
+          path: /login
+          method: post
+
+  #### USER #####
+  createUser:
+    handler: Back/src/user/create.handler
+    name: createUser
+    description: This function creates a new user.
+    events:
+      - httpApi:
+          path: /user/create
+          method: post
+
+  getUser:
+    handler: Back/src/user/get.handler
+    name: getUser
+    description: This function obtain users.
+    events:
+      - httpApi:
+          path: /user/obtain
+          method: get
+
+  deleteUser:
+    handler: Back/src/user/deleteById.handler
+    name: deleteUser
+    description: This function delete a user.
+    events:
+      - httpApi:
+          path: /user/delete
+          method: delete
+
+  #### GROUP #####
+  createNewGroup:
+    handler: Back/src/courseGroup/group/createGroup.handler
+    name: createNewGroup
+    description: This function creates a new group.
+    events:
+      - httpApi:
+          path: /group/create
+          method: post
+
+  obtainGroup:
+    handler: Back/src/courseGroup/group/get.handler
+    name: obtainGroup
+    description: This function obtain a group.
+    events:
+      - httpApi:
+          path: /group/obtain
+          method: get
+
+  deleteGroupByName:
+    handler: Back/src/courseGroup/group/deleteGroupByName.handler
+    name: deleteGroupByName
+    description: This function delete a group.
+    events:
+      - httpApi:
+          path: /group/delete
+          method: delete
+
+  #### COURSE #####
+  createCourse:
+    handler: Back/src/courseGroup/course/createCourse.handler
+    name: createCourse
+    description: This function creates a new course.
+    events:
+      - httpApi:
+          path: /course/create
+          method: post
+
+  getCourse:
+    handler: Back/src/courseGroup/course/get.handler
+    name: getCourse
+    description: This function obtain a course.
+    events:
+      - httpApi:
+          path: /course/obtain
+          method: get
+
+  deleteCourse:
+    handler: Back/src/courseGroup/course/deleteCourseByName.handler
+    name: deleteGroup
+    description: This function delete a course.
+    events:
+      - httpApi:
+          path: /course/delete
+          method: delete
+
+# CREACION DE TABLAS EN DYNAMODB
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ch-users
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    CoursesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ch-courses
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    GroupsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ch-groups
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: name-index
+            KeySchema:
+              - AttributeName: name
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
+    DataTimeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ch-data-time
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: nameActivity
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: nameActivity-index
+            KeySchema:
+              - AttributeName: nameActivity
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
