@@ -1,0 +1,141 @@
+/* style_estu.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4fa;
+  display: flex; /* Para centrar el contenido principal */
+  flex-direction: column; /* Apila elementos verticalmente */
+  align-items: center; /* Centra horizontalmente el contenido de body */
+  min-height: 100vh; /* Ocupa toda la altura de la vista */
+}
+
+header {
+  background-color: #4a90e2;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-end; /* Alinea los elementos de la sesión de usuario a la derecha */
+  align-items: center;
+  width: 100%;
+}
+
+.user-session {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* margin-left: auto; Si justify-content: flex-end ya lo centra a la derecha, no es estrictamente necesario */
+}
+
+.user-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.logout-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: white;
+  color: #4a90e2;
+  cursor: pointer;
+}
+
+main {
+  padding: 30px 20px;
+  display: flex; /* CAMBIO CLAVE: Usa flexbox para organizar los hijos */
+  flex-direction: column; /* CAMBIO CLAVE: Apila los elementos verticalmente */
+  align-items: center; /* Centra la tarjeta y el botón horizontalmente */
+  gap: 30px; /* Espacio entre la tarjeta y el nuevo botón */
+  width: 100%;
+  max-width: 400px; /* Limita el ancho del main para centrar mejor el contenido */
+  margin-top: 20px; /* Espacio superior para el contenido de main */
+}
+
+.card {
+  /* MODIFICADO: Usaremos flexbox para organizar imagen y texto dentro */
+  display: flex;
+  flex-direction: column; /* Apila imagen y texto verticalmente */
+  background-color: #ffffff; /* Fondo blanco para la tarjeta */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden; /* Asegura que el border-radius se aplique a los contenidos */
+  width: 100%; /* La tarjeta ocupa el 100% del ancho disponible en main */
+  max-width: 250px; /* Limita el ancho de la tarjeta */
+}
+
+.card-image {
+  width: 100%; /* Ocupa el 100% del ancho de la tarjeta */
+  height: 100px;
+  background-color: #d3d7dc;
+  border-top-left-radius: 8px; /* Redondea las esquinas superiores de la imagen */
+  border-top-right-radius: 8px;
+  /* margin-bottom: 8px; ELIMINADO: el padding de .card-text controlará el espacio */
+  cursor: pointer;
+  object-fit: cover; /* Para imágenes reales, asegura que cubra el área */
+}
+
+/* Contenedor para el texto dentro de la tarjeta */
+.card-text {
+  padding: 10px 15px 15px; /* Padding interno para el texto (arriba, lados, abajo) */
+  text-align: left; /* Alinea el texto a la izquierda */
+  display: flex; /* Para organizar título y subtítulo */
+  flex-direction: column; /* Apila título y subtítulo */
+  gap: 5px; /* Espacio entre título y subtítulo */
+}
+
+
+.card-title, .card-subtitle {
+  margin: 0; /* Elimina márgenes por defecto de h3/p */
+  color: #333;
+}
+
+.card-title {
+  font-size: 1.1em;
+  line-height: 1.2;
+}
+
+/* Si tuvieras un subtítulo de nuevo, descomenta y usa esta clase */
+/*
+.card-subtitle {
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.2;
+}
+*/
+
+.card-title a,
+.card-subtitle a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-title a:hover,
+.card-subtitle a:hover,
+.card:hover .card-image {
+  opacity: 0.8;
+}
+
+/* Estilos para el NUEVO botón "Agregar listado de estudiantes" */
+.add-list-btn {
+  background-color: #28a745; /* Un color verde para diferenciarlo */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  display: inline-block; /* Para que el padding y margen funcionen bien */
+}
+
+.add-list-btn:hover {
+  background-color: #218838; /* Verde más oscuro al pasar el ratón */
+}
