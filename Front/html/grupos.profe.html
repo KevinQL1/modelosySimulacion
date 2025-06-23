@@ -1,30 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Modelos y Simulación</title>
-    <link rel="stylesheet" href="../css/style_estu.css">
+  <meta charset="UTF-8">
+  <title>Grupos de Asignatura</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4ff;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #003d99;
+    }
+
+    .add-group-btn {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .add-group-btn:hover {
+      background-color: #005fa3;
+    }
+
+    .form-container {
+      display: none;
+      background: white;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .form-container button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #218838;
+    }
+
+    .group-list {
+      margin-top: 20px;
+    }
+
+    .group-item {
+      display: block;
+      background: #e6f0ff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #003d99;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .group-item:hover {
+      background: #d6e6ff;
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        <div class="user-session">
-            <span class="user-icon">👤</span>
-            <button class="logout-btn">Cerrar Sesión</button>
-        </div>
-    </header>
 
-    <main>
-        <a href="#" class="card">
-            <div class="card-image"></div>
-            <div class="card-text">
-                <p class="card-subtitle"><a href="Contenido_estu.html">Grupo 02</a></p>
-            </div>
-            <main>
-                <a href="#" class="card">
-                </a>
-                <button class="add-subject-btn">Agregar listado de estudiantes</button>
-            </main>
+  <header>
+    <div class="title" id="subjectTitle">Asignatura</div>
+    <button class="add-group-btn" onclick="toggleForm()">Agregar Grupo</button>
+  </header>
+
+  <div class="form-container" id="formContainer">
+    <input type="number" id="groupNumber" placeholder="Número del grupo" required>
+    <input type="text" id="groupSchedule" placeholder="Horario" required>
+    <button onclick="addGroup()">Guardar Grupo</button>
+  </div>
+
+  <div class="group-list" id="groupList"></div>
+
+  <script>
+    // Mostrar nombre de la asignatura desde URL
+    const params = new URLSearchParams(window.location.search);
+    const materia = params.get('materia') || 'Asignatura';
+    document.getElementById('subjectTitle').textContent = materia;
+
+    // Mostrar/ocultar formulario
+    function toggleForm() {
+      const form = document.getElementById('formContainer');
+      form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    }
+
+    // Agregar grupo
+    function addGroup() {
+      const number = document.getElementById('groupNumber').value.trim();
+      const schedule = document.getElementById('groupSchedule').value.trim();
+
+      if (!number || isNaN(number) || !schedule) {
+        alert("Por favor, completa todos los campos correctamente.");
+        return;
+      }
+
+      const list = document.getElementById('groupList');
+      const link = document.createElement('a');
+      link.className = 'group-item';
+      link.href = `video_profesor.html?materia=${encodeURIComponent(materia)}&grupo=${encodeURIComponent(number)}`;
+      link.textContent = `Grupo ${number} - ${schedule}`;
+
+      list.appendChild(link);
+
+      // Limpiar formulario y ocultarlo
+      document.getElementById('groupNumber').value = '';
+      document.getElementById('groupSchedule').value = '';
+      toggleForm();
+    }
+  </script>
 </body>
 </html>

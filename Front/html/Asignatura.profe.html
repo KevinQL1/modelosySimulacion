@@ -1,31 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Modelos y Simulación</title>
-    <link rel="stylesheet" href="../css/style_estu.css">
+  <meta charset="UTF-8">
+  <title>Asignaturas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4ff;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .logout-btn {
+      background-color: #003d99;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #0055cc;
+    }
+
+    .add-subject-btn {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .add-subject-btn:hover {
+      background-color: #005fa3;
+    }
+
+    .form-container {
+      display: none;
+      background: white;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .form-container button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #218838;
+    }
+
+    .subject-list {
+      margin-top: 20px;
+    }
+
+    .subject-item {
+      display: block;
+      background: #e6f0ff;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #003d99;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .subject-item:hover {
+      background: #d6e6ff;
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        <div class="user-session">
-            <span class="user-icon">👤</span>
-            <button class="logout-btn">Cerrar Sesión</button>
-        </div>
-    </header>
+  <header>
+    <button class="logout-btn">Cerrar Sesión</button>
+  </header>
 
-    <main>
-        <a href="#" class="card">
-            <div class="card-image"></div>
-            <div class="card-text">
-                <h3 class="card-title"><a href="Contenido_estu.html">Modelos y simulación</a></h3>
-                <p class="card-subtitle"><a href="Contenido_estu.html">Grupo 02</a></p>
-            </div>
-            <main>
-                <a href="#" class="card">
-                </a>
-                <button class="add-subject-btn">Agregar Asignatura</button>
-            </main>
+  <main>
+    <button class="add-subject-btn" onclick="toggleForm()">Agregar Asignatura</button>
+
+    <div class="form-container" id="formContainer">
+      <input type="text" id="subjectName" placeholder="Nombre de la asignatura" required>
+      <button onclick="addSubject()">Aceptar</button>
+    </div>
+
+    <div class="subject-list" id="subjectList"></div>
+  </main>
+
+  <script>
+    function toggleForm() {
+      const form = document.getElementById('formContainer');
+      form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    }
+
+    function addSubject() {
+      const name = document.getElementById('subjectName').value.trim();
+
+      if (!name) {
+        alert("Por favor, escribe el nombre de la asignatura.");
+        return;
+      }
+
+      const list = document.getElementById('subjectList');
+      const link = document.createElement('a');
+      link.className = 'subject-item';
+      link.href = `grupos.profe.html?materia=${encodeURIComponent(name)}`;
+      link.textContent = name;
+
+      list.appendChild(link);
+
+      // Limpiar formulario y ocultarlo
+      document.getElementById('subjectName').value = '';
+      toggleForm();
+    }
+  </script>
 </body>
 </html>
