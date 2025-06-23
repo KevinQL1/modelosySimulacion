@@ -135,32 +135,61 @@
   </main>
 
   <script>
-    function toggleForm() {
-      const form = document.getElementById('formContainer');
-      form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    async function addSubject() {
+    const name = document.getElementById('subjectName').value.trim();
+
+    if (!name) {
+      alert("Por favor, escribe el nombre de la asignatura.");
+      return;
     }
 
-    function addSubject() {
-      const name = document.getElementById('subjectName').value.trim();
+    const courseData = {
+      id: crypto.randomUUID(), // genera un ID único
+      name,
+      idUser: localStorage.getItem('userId') || 'demo-user',
+      nameGroup: "Grupo A",
+      teacher: "Profesor X",
+      schedule: "Lunes 8am"
+    };
 
-      if (!name) {
-        alert("Por favor, escribe el nombre de la asignatura.");
-        return;
-      }
-
-      const list = document.getElementById('subjectList');
-      const link = document.createElement('a');
-      link.className = 'subject-item';
-      link.href = `grupos.profe.html?materia=${encodeURIComponent(name)}`;
-      link.textContent = name;
-
-      list.appendChild(link);
-
-      // Limpiar formulario y ocultarlo
+    try {
+      await createCourse(courseData); // usa tu conexión de apiConnection.js
       document.getElementById('subjectName').value = '';
       toggleForm();
+      loadSubjects();  // refresca la lista
+
+    } catch (err) {
+      console.error('Error al crear asignatura:', err);
+      alert("Error al guardar la asignatura.");
     }
-    
+  }
+
+  async function loadSubjects() {
+    try {
+      const res = await getCourses(); // llama a tu backend
+      const list = document.getElementById('subjectList');
+      list.innerHTML = '';
+
+      res.data.forEach(subject => {
+        const link = document.createElement('a');
+        link.className = 'subject-item';
+        link.href = `grupos.profe.html?materia=${encodeURIComponent(subject.name)}`;
+        link.textContent = subject.name;
+        list.appendChild(link);
+      });
+
+    } catch (err) {
+      console.error('Error al obtener asignaturas:', err);
+    }
+  }
+
+  function toggleForm() {
+    const form = document.getElementById('formContainer');
+    form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', loadSubjects);
+
   document.getElementById('logout-btn').addEventListener('click', function() {
     // Elimina posibles datos de sesión (ajusta según tu app)
     localStorage.clear();
