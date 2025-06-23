@@ -11,23 +11,19 @@
     }
     .header {
       display: flex;
-      justify-content: flex-end;  /* Todo el contenido del header a la derecha */
-      padding: 10px;             /* Espacio interno del header */
-      background-color: #003d99; /* Opcional: fondo del header */
-      
+      justify-content: flex-end;
+      padding: 10px;
+      background-color: #003d99;
     }
-
     .user-session {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .user-icon {
       font-size: 24px;
       color: white;
     }
-
     .logout-btn {
       background-color: #003d99;
       color: white;
@@ -37,20 +33,17 @@
       cursor: pointer;
       margin-bottom: 20px;
     }
-
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
-
     .title {
       font-size: 24px;
       font-weight: bold;
       color: #003d99;
     }
-
     .add-group-btn {
       background-color: #0077cc;
       color: white;
@@ -59,12 +52,11 @@
       border-radius: 10px;
       cursor: pointer;
       font-size: 15px;
+      margin-left: 10px;
     }
-
     .add-group-btn:hover {
       background-color: #005fa3;
     }
-
     .form-container {
       display: none;
       background: white;
@@ -74,7 +66,6 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       max-width: 400px;
     }
-
     .form-container input {
       width: 100%;
       padding: 10px;
@@ -82,7 +73,6 @@
       border-radius: 8px;
       border: 1px solid #ccc;
     }
-
     .form-container button {
       background-color: #28a745;
       color: white;
@@ -91,15 +81,12 @@
       border-radius: 8px;
       cursor: pointer;
     }
-
     .form-container button:hover {
       background-color: #218838;
     }
-
     .group-list {
       margin-top: 20px;
     }
-
     .group-item {
       display: block;
       background: #e6f0ff;
@@ -111,7 +98,6 @@
       font-weight: bold;
       transition: background 0.2s;
     }
-
     .group-item:hover {
       background: #d6e6ff;
     }
@@ -126,107 +112,129 @@
       <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
     </div>
     <div class="title" id="subjectTitle">Asignatura</div>
-    <button class="add-group-btn" onclick="toggleForm()">Agregar Grupo</button>
-      <label class="add-group-btn" for="fileInput" style="text-align: center; cursor: pointer;">
+    <div>
+      <button class="add-group-btn" onclick="toggleForm()">Agregar Grupo</button>
+      <label class="add-group-btn" for="fileInput" style="cursor: pointer;">
         Subir listado
       </label>
       <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display: none;">
-
+    </div>
   </header>
 
+  
   <div class="form-container" id="formContainer">
     <input type="number" id="groupNumber" placeholder="Número del grupo" required>
     <input type="text" id="groupSchedule" placeholder="Horario" required>
     <button onclick="addGroup()">Guardar Grupo</button>
   </div>
 
+  
   <div class="group-list" id="groupList"></div>
 
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../connectionBackend/apiConnection.js"></script>
+
   <script>
-    // Mostrar nombre de la asignatura desde URL
     const params = new URLSearchParams(window.location.search);
     const materia = params.get('materia') || 'Asignatura';
     document.getElementById('subjectTitle').textContent = materia;
 
-    // Mostrar/ocultar formulario
     function toggleForm() {
       const form = document.getElementById('formContainer');
       form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
     }
 
-    // Agregar grupo
-    function addGroup() {
+    async function loadGroups() {
+      const materiaId = params.get('materia');
+      if (!materiaId) {
+        console.error('No se especificó la materia en la URL.');
+        return;
+      }
+      try {
+        const response = await getGroups(materiaId);
+        const grupos = response.data;
+        const list = document.getElementById('groupList');
+        list.innerHTML = '';
+        grupos.forEach(group => {
+          const link = document.createElement('a');
+          link.className = 'group-item';
+          link.href = `video_profesor.html?grupo=${encodeURIComponent(group.id)}`;
+          link.textContent = group.name;
+          list.appendChild(link);
+        });
+      } catch (error) {
+        console.error('Error al cargar los grupos:', error);
+        alert('No se pudieron cargar los grupos.');
+      }
+    }
+
+    async function addGroup() {
       const number = document.getElementById('groupNumber').value.trim();
       const schedule = document.getElementById('groupSchedule').value.trim();
-
       if (!number || isNaN(number) || !schedule) {
         alert("Por favor, completa todos los campos correctamente.");
         return;
       }
-
-      const list = document.getElementById('groupList');
-      const link = document.createElement('a');
-      link.className = 'group-item';
-      link.href = `video_profesor.html?materia=${encodeURIComponent(materia)}&grupo=${encodeURIComponent(number)}`;
-      link.textContent = `Grupo ${number} - ${schedule}`;
-
-      list.appendChild(link);
-
-      // Limpiar formulario y ocultarlo
-      document.getElementById('groupNumber').value = '';
-      document.getElementById('groupSchedule').value = '';
-      toggleForm();
-    }
-
-    //cerrar sesion
-
-   document.getElementById('logout-btn').addEventListener('click', function() {
-    // Elimina posibles datos de sesión (ajusta según tu app)
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // Si usas cookies para auth, aquí podrías eliminarlas (depende de cómo esté hecho tu backend)
-    // document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-    // Redirige al login
-    window.location.href = 'login.html';  // Cambia a la ruta de tu login
-  });
-
-  //subir listado
-    document.getElementById('fileInput').addEventListener('change', async function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-      // Quitamos encabezado del DataURL y obtenemos el base64
-      const base64 = e.target.result.split(',')[1];
-
+      const groupData = {
+        id: number,
+        name: `Grupo ${number} - ${schedule}`
+      };
       try {
-        const response = await fetch('https://TU_API_GATEWAY_URL/crear-usuarios', {  // Cambia por tu URL real
-          method: 'POST',
-          headers: {
-            'Content-Type': file.type  // Excel: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-          },
-          body: base64
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          alert('Usuarios creados correctamente: ' + JSON.stringify(result.mensaje));
-        } else {
-          const error = await response.text();
-          alert('Error al subir archivo: ' + error);
+        const response = await createGroup(groupData);
+        if (response.status === 201 || response.status === 200) {
+          const list = document.getElementById('groupList');
+          const link = document.createElement('a');
+          link.className = 'group-item';
+          link.href = `video_profesor.html?grupo=${encodeURIComponent(number)}`;
+          link.textContent = groupData.name;
+          list.appendChild(link);
+          document.getElementById('groupNumber').value = '';
+          document.getElementById('groupSchedule').value = '';
+          toggleForm();
         }
       } catch (err) {
-        console.error('Error al enviar archivo:', err);
-        alert('Error al conectar con el servidor');
+        console.error('Error al crear el grupo:', err);
+        alert('Hubo un error al guardar el grupo.');
       }
-    };
+    }
 
-    reader.readAsDataURL(file);  // Convertir a base64
-  });
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    });
 
+    document.getElementById('fileInput').addEventListener('change', async function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function (e) {
+        const base64 = e.target.result.split(',')[1];
+        try {
+          const response = await fetch('https://TU_API_GATEWAY_URL/crear-usuarios', {
+            method: 'POST',
+            headers: { 'Content-Type': file.type },
+            body: base64
+          });
+          if (response.ok) {
+            const result = await response.json();
+            alert('Usuarios creados correctamente: ' + JSON.stringify(result.mensaje));
+          } else {
+            const error = await response.text();
+            alert('Error al subir archivo: ' + error);
+          }
+        } catch (err) {
+          console.error('Error al enviar archivo:', err);
+          alert('Error al conectar con el servidor');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    loadGroups();
   </script>
+
 </body>
 </html>
+
