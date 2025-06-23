@@ -6,6 +6,19 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: sa-east-1
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+      allowedMethods:
+        - OPTIONS
+        - GET
+        - POST
+        - PUT
+        - DELETE
   iam:
     role:
       statements:

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
@@ -23,7 +24,7 @@
       background-color: white;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 400px;
     }
@@ -40,7 +41,8 @@
       color: #003366;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 12px;
       margin-bottom: 20px;
@@ -48,7 +50,8 @@
       border-radius: 8px;
     }
 
-    input:focus, select:focus {
+    input:focus,
+    select:focus {
       border-color: #003d99;
       outline: none;
     }
@@ -77,6 +80,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="login-container">
@@ -86,40 +90,47 @@
       <input type="text" id="doc" name="doc" placeholder="Ingresa tu documento" required>
       <div id="error" class="error"></div>
 
-      <label for="rol">Rol</label>
-      <select id="rol" name="rol" required>
-        <option value="" disabled selected>Selecciona tu rol</option>
-        <option value="estudiante">Estudiante</option>
-        <option value="profesor">Profesor</option>
-      </select>
-
       <button type="submit" class="btn">Ingresar</button>
     </form>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../connectionBackend/apiConnection.js"></script>
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
       const doc = document.getElementById('doc').value.trim();
-      const rol = document.getElementById('rol').value;
       const errorDiv = document.getElementById('error');
 
       if (!/^\d+$/.test(doc)) {
-        errorDiv.textContent = "El documento debe ser numerico.";
+        errorDiv.textContent = "El documento debe ser numérico.";
         return;
       }
 
       errorDiv.textContent = "";
 
-    
-      if (rol === "estudiante") {
-        window.location.href = "grupo_estu.html"; 
-      } else if (rol === "profesor") {
-        window.location.href = "ruta_para_profesor.html"; 
-      }
+      login(doc)
+        .then(response => {
+          if (response.data?.token) {
+            localStorage.setItem('token', response.data.token);
+
+            if (response.data.user.scope === "estudiante") {
+              window.location.href = "grupo_estu.html";
+            } else if (response.data.user.scope === "administrador") {
+              window.location.href = "grupos.profe.html";
+            }
+          } else {
+            errorDiv.textContent = "Documento no válido o usuario no encontrado.";
+          }
+        })
+        .catch(err => {
+          console.error('Error en login:', err);
+          errorDiv.textContent = "Error en el servidor o en los datos.";
+        });
     });
   </script>
 
 </body>
+
 </html>

@@ -10,10 +10,7 @@ const getCourse = async (event) => {
         const { id, curso } = queryParams;
 
         const user = tokenVerification(event);
-        if (!user || user.scope !== 'administrador') {
-            logger.error('Usuario no autorizado para obtener cursos');
-            return httpResponse.unauthorized(new Error('No tienes permiso para obtener cursos'))(event.requestContext.path);
-        }
+
 
         let res
         if (id) {
@@ -22,7 +19,9 @@ const getCourse = async (event) => {
         } else if (curso) {
             logger.info('curso', curso);
             res = await courseService.getCourse(curso);
-        } else res = await courseService.getAllItems();
+        } else if (user.scope === 'administrador') {
+            res = await courseService.getAllItems();
+        }
 
 
         logger.info('respuesta', res);

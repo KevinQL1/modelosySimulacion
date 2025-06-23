@@ -2,6 +2,7 @@ module.exports = class CourseEntity {
     constructor({
         id,
         name,
+        idUser,
         nameGroup,
         teacher,
         schedule,
@@ -9,6 +10,7 @@ module.exports = class CourseEntity {
     }) {
         this.id = id
         this.name = name
+        this.idUser = idUser
         this.nameGroup = nameGroup
         this.teacher = teacher
         this.schedule = schedule
