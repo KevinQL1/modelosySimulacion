@@ -11,6 +11,36 @@
       padding: 40px;
     }
 
+
+        .header {
+      display: flex;
+      justify-content: flex-end;  /* Todo el contenido del header a la derecha */
+      padding: 10px;             /* Espacio interno del header */
+      background-color: #003d99; /* Opcional: fondo del header */
+      
+    }
+
+    .user-session {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-icon {
+      font-size: 24px;
+      color: white;
+    }
+
+    .logout-btn {
+      background-color: #003d99;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
     .container {
       max-width: 800px;
       margin: auto;
@@ -98,6 +128,12 @@
   </style>
 </head>
 <body>
+  <header>
+    <div class="user-session">
+      <span class="user-icon">👤</span>
+      <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
+    </div>
+  </header>
 
   <div class="container">
     <button class="btn" onclick="toggleForm()">Agregar Video</button>
@@ -166,6 +202,21 @@
       const panel = button.closest('.video-card').querySelector('.privacy-panel');
       panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
     }
+
+//cerrar sesion
+
+   document.getElementById('logout-btn').addEventListener('click', function() {
+    // Elimina posibles datos de sesión (ajusta según tu app)
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Si usas cookies para auth, aquí podrías eliminarlas (depende de cómo esté hecho tu backend)
+    // document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // Redirige al login
+    window.location.href = 'login.html';  // Cambia a la ruta de tu login
+  });
+
   </script>
 
 </body>

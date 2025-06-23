@@ -9,6 +9,34 @@
       background: #f0f4ff;
       padding: 20px;
     }
+    .header {
+      display: flex;
+      justify-content: flex-end;  /* Todo el contenido del header a la derecha */
+      padding: 10px;             /* Espacio interno del header */
+      background-color: #003d99; /* Opcional: fondo del header */
+      
+    }
+
+    .user-session {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-icon {
+      font-size: 24px;
+      color: white;
+    }
+
+    .logout-btn {
+      background-color: #003d99;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
 
     header {
       display: flex;
@@ -93,8 +121,17 @@
 <body>
 
   <header>
+    <div class="user-session">
+      <span class="user-icon">👤</span>
+      <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
+    </div>
     <div class="title" id="subjectTitle">Asignatura</div>
     <button class="add-group-btn" onclick="toggleForm()">Agregar Grupo</button>
+      <label class="add-group-btn" for="fileInput" style="text-align: center; cursor: pointer;">
+        Subir listado
+      </label>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display: none;">
+
   </header>
 
   <div class="form-container" id="formContainer">
@@ -140,6 +177,56 @@
       document.getElementById('groupSchedule').value = '';
       toggleForm();
     }
+
+    //cerrar sesion
+
+   document.getElementById('logout-btn').addEventListener('click', function() {
+    // Elimina posibles datos de sesión (ajusta según tu app)
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Si usas cookies para auth, aquí podrías eliminarlas (depende de cómo esté hecho tu backend)
+    // document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // Redirige al login
+    window.location.href = 'login.html';  // Cambia a la ruta de tu login
+  });
+
+  //subir listado
+    document.getElementById('fileInput').addEventListener('change', async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      // Quitamos encabezado del DataURL y obtenemos el base64
+      const base64 = e.target.result.split(',')[1];
+
+      try {
+        const response = await fetch('https://TU_API_GATEWAY_URL/crear-usuarios', {  // Cambia por tu URL real
+          method: 'POST',
+          headers: {
+            'Content-Type': file.type  // Excel: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+          },
+          body: base64
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          alert('Usuarios creados correctamente: ' + JSON.stringify(result.mensaje));
+        } else {
+          const error = await response.text();
+          alert('Error al subir archivo: ' + error);
+        }
+      } catch (err) {
+        console.error('Error al enviar archivo:', err);
+        alert('Error al conectar con el servidor');
+      }
+    };
+
+    reader.readAsDataURL(file);  // Convertir a base64
+  });
+
   </script>
 </body>
 </html>

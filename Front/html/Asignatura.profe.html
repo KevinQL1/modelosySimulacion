@@ -10,20 +10,35 @@
       padding: 20px;
     }
 
-    header {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 20px;
-    }
+    .header {
+  display: flex;
+  justify-content: flex-end;  /* Todo el contenido del header a la derecha */
+  padding: 10px;             /* Espacio interno del header */
+  background-color: #003d99; /* Opcional: fondo del header */
+  
+}
 
-    .logout-btn {
-      background-color: #003d99;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
+.user-session {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.logout-btn {
+  background-color: #003d99;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
 
     .logout-btn:hover {
       background-color: #0055cc;
@@ -99,7 +114,10 @@
 
 <body>
   <header>
-    <button class="logout-btn">Cerrar Sesión</button>
+    <div class="user-session">
+      <span class="user-icon">👤</span>
+      <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
+    </div>
   </header>
 
   <main>
@@ -139,6 +157,19 @@
       document.getElementById('subjectName').value = '';
       toggleForm();
     }
+    
+  document.getElementById('logout-btn').addEventListener('click', function() {
+    // Elimina posibles datos de sesión (ajusta según tu app)
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Si usas cookies para auth, aquí podrías eliminarlas (depende de cómo esté hecho tu backend)
+    // document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // Redirige al login
+    window.location.href = 'login.html';  // Cambia a la ruta de tu login
+  });
+
   </script>
 </body>
 </html>

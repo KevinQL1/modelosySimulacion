@@ -4,6 +4,34 @@ body {
   background-color: #eef1f5;
 }
 
+.header {
+  display: flex;
+  justify-content: flex-end;  /* Todo el contenido del header a la derecha */
+  padding: 10px;             /* Espacio interno del header */
+  background-color: #003d99; /* Opcional: fondo del header */
+  
+}
+
+.user-session {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.logout-btn {
+  background-color: #003d99;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
 .container {
   background-color: #d3d7dc;
   padding: 20px;
