@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video con Cronómetro y Actividades</title>
+    <link rel="stylesheet" href="../css/style-video-cronometro.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Columna izquierda: video y cargar video -->
+        <div id="video-section">
+            <div id="video-id-input-container">
+                <input type="text" id="input-video-id" placeholder="Ingresa el ID del video de YouTube" />
+                <button id="btn-cargar-video">Cargar Video</button>
+            </div>
+            <div id="video-player-container">
+                <div id="youtube-player"></div>
+            </div>
+        </div>
+        <!-- Columna derecha: actividades -->
+        <div id="actividades-section">
+            <div id="actividades-container">
+                <h2>Actividades</h2>
+                <div id="feedback" class="feedback" style="display:none;"></div>
+                <div id="lista-actividades">
+                    <!-- Aquí se renderizan las tarjetas de actividades -->
+                </div>
+                <button id="btn-nueva-actividad">+ Nueva Actividad</button>
+                <button id="btn-exportar-excel">Exportar a Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="../js/cronometro.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../connectionBackend/apiConnection.js"></script>
+</body>
+</html>

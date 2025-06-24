@@ -26,14 +26,14 @@ provider:
           Action:
             - dynamodb:*
           Resource:
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users/index/name-index
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time/index/nameActivity-index
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses/index/name-index
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups
-            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups/index/name-index
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-users
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-users/index/name-index
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-data-time
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-data-time/index/nameActivity-index
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-courses
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-courses/index/name-index
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-groups
+            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-groups/index/name-index
 
 # CREACION DE LAS FUNCIONES LAMBDA
 functions:
@@ -129,6 +129,61 @@ functions:
     events:
       - httpApi:
           path: /course/delete
+          method: delete
+
+  #### DATA TIME #####
+  createActivity:
+    handler: Back/src/dataTime/createActivity.handler
+    name: createActivity
+    description: Crea una nueva actividad para un usuario y video.
+    events:
+      - httpApi:
+          path: /data-time/activity
+          method: post
+
+  updateActivity:
+    handler: Back/src/dataTime/updateActivity.handler
+    name: updateActivity
+    description: Actualiza el nombre de una actividad existente.
+    events:
+      - httpApi:
+          path: /data-time/activity
+          method: put
+
+  getActivities:
+    handler: Back/src/dataTime/getActivities.handler
+    name: getActivities
+    description: Obtiene actividades y laps por usuario y video.
+    events:
+      - httpApi:
+          path: /data-time/activities
+          method: get
+
+  addLap:
+    handler: Back/src/dataTime/addLap.handler
+    name: addLap
+    description: Agrega un lap a una actividad.
+    events:
+      - httpApi:
+          path: /data-time/lap
+          method: post
+
+  deleteLap:
+    handler: Back/src/dataTime/deleteLap.handler
+    name: deleteLap
+    description: Borra un lap de una actividad.
+    events:
+      - httpApi:
+          path: /data-time/lap
+          method: delete
+
+  deleteActivity:
+    handler: Back/src/dataTime/deleteActivity.handler
+    name: deleteActivity
+    description: Borra una actividad completa.
+    events:
+      - httpApi:
+          path: /data-time/activity
           method: delete
 
 # CREACION DE TABLAS EN DYNAMODB

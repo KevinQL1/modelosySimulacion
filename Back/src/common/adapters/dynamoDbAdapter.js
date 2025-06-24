@@ -87,6 +87,18 @@ class DynamoDbAdapter {
         const response = await this.ddb.send(command)
         return response
     }
+
+    async scanItems(params) {
+        try {
+            const command = new ScanCommand(params);
+            const response = await this.ddb.send(command);
+            logger.info('Scan ejecutado correctamente', { items: response.Items?.length });
+            return response;
+        } catch (error) {
+            logger.error('Error al ejecutar scan', { error });
+            throw error;
+        }
+    }
 }
 
 module.exports = DynamoDbAdapter;
