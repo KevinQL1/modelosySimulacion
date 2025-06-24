@@ -1,5 +1,15 @@
-
 const allowOrigins = '*';
+
+const httpResponse = (statusCode, body) => ({
+  statusCode,
+  body: JSON.stringify(body),
+  headers: {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': allowOrigins,
+    'Access-Control-Allow-Methods': 'OPTIONS,GET,POST,PUT,DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  }
+})
 
 const ok = (body) => ({
   statusCode: 200,
@@ -70,6 +80,7 @@ const unauthorized =
     })
 
 module.exports = {
+  httpResponse,
   ok,
   badRequest,
   notFound,

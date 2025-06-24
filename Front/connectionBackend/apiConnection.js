@@ -1,4 +1,4 @@
-const BASE_URL = 'https://htjs2tcinl.execute-api.sa-east-1.amazonaws.com';
+const BASE_URL = 'https://8lbs9ozhwh.execute-api.sa-east-1.amazonaws.com';
 
 const getToken = () => localStorage.getItem('token');
 
@@ -76,5 +76,48 @@ const deleteCourse = (curso) => {
     return axios.delete(`${BASE_URL}/course/delete`, {
         headers: { 'Authorization': `Bearer ${getToken()}` },
         params: { curso }
+    });
+};
+
+// Actividades (data-time)
+const createActivity = (activityData) => {
+    return axios.post(`${BASE_URL}/data-time/activity`, activityData, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+};
+
+const updateActivity = (activityData) => {
+    return axios.put(`${BASE_URL}/data-time/activity`, activityData, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+};
+
+const getActivities = (idUser, videoId) => {
+    const params = {};
+    if (idUser) params.idUser = idUser;
+    if (videoId) params.videoId = videoId;
+    return axios.get(`${BASE_URL}/data-time/activities`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        params
+    });
+};
+
+const addLap = (lapData) => {
+    return axios.post(`${BASE_URL}/data-time/lap`, lapData, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+};
+
+const deleteLap = (activityId, lapIndex) => {
+    return axios.delete(`${BASE_URL}/data-time/lap`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        data: { activityId, lapIndex }
+    });
+};
+
+const deleteActivity = (activityId) => {
+    return axios.delete(`${BASE_URL}/data-time/activity`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        params: { id: activityId }
     });
 };
