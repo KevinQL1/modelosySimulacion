@@ -41,8 +41,8 @@ const createUser = async (event) => {
     try {
         const userService = new UserService();
 
-        const user = tokenVerification(event);
-        if (!user || user.scope !== 'administrador') {
+        const userToken = tokenVerification(event);
+        if (!userToken || userToken.scope !== 'administrador') {
             logger.error('Usuario no autorizado para crear usuarios');
             return httpResponse.unauthorized(new Error('No tienes permiso para crear usuarios'))(event.requestContext.path);
         }
@@ -56,7 +56,7 @@ const createUser = async (event) => {
             const userObject = {
                 id: user.cedula?.toString(),
                 name: user.nombre,
-                scope: user.rol
+                scope: 'estudiante'
             };
             logger.info('Usuarios a crear', userObject);
 
