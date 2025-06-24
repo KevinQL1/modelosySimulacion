@@ -103,6 +103,15 @@ functions:
           path: /group/delete
           method: delete
 
+  obtainGroups:
+    handler: Back/src/courseGroup/group/getGroups.handler
+    name: obtainGroups
+    description: This function obtain all groups.
+    events:
+      - httpApi:
+          path: /group/all
+          method: get
+
   #### COURSE #####
   createCourse:
     handler: Back/src/courseGroup/course/createCourse.handler

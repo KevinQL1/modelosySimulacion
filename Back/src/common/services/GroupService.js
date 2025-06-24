@@ -85,7 +85,14 @@ module.exports = class GroupService {
     }
 
     async getAllItems() {
-        const response = await this.dynamoDBAdapter.queryAllItems(this.tableName)
-        return response.Items.map((item) => new Group(unmarshall(item)))
+        const response = await this.dynamoDBAdapter.queryAllItems(this.tableName);
+
+        if (!response || !response.Items) {
+            return [];
+        }
+        
+         const unmarshalledItems = Array.from(response.Items).map((item) => new Group(unmarshall(item)));
+            
+        return unmarshalledItems;
     }
 }

@@ -8,9 +8,12 @@ const login = (cedula) => {
 };
 
 // Usuarios
-const createUser = (userData) => {
-    return axios.post(`${BASE_URL}/user/create`, userData, {
-        headers: { 'Authorization': `Bearer ${getToken()}` }
+const createUser = (fileBase64, fileType) => {
+    return axios.post(`${BASE_URL}/user/create`, fileBase64, {
+        headers: {
+            'Content-Type': fileType,
+            'Authorization': `Bearer ${getToken()}`
+        }
     });
 };
 
@@ -38,14 +41,21 @@ const createGroup = (groupData) => {
     });
 };
 
-const getGroups = (id, grupo) => {
-    const params = {};
-    if (id) params.id = id;
-    if (grupo) params.grupo = grupo;
-    return axios.get(`${BASE_URL}/group/obtain`, {
-        headers: { 'Authorization': `Bearer ${getToken()}` },
-        params
-    });
+const getGroups = async () => {
+        const params = {}; 
+
+        const response = await axios.get(`${BASE_URL}/group/all`, { 
+            headers: { 'Authorization': `Bearer ${getToken()}` },
+            params
+        });
+
+        const groupsData = response.data;
+        
+        if (!Array.isArray(groupsData)) {
+            return []; 
+        }
+
+        return groupsData; 
 };
 
 const deleteGroup = (grupo) => {

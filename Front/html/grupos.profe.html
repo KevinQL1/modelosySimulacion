@@ -145,24 +145,30 @@
       form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
     }
 
-    async function loadGroups() {
-      const materiaId = params.get('materia');
-      if (!materiaId) {
-        console.error('No se especificó la materia en la URL.');
-        return;
-      }
-      try {
-        const response = await getGroups(materiaId);
-        const grupos = response.data;
-        const list = document.getElementById('groupList');
-        list.innerHTML = '';
-        grupos.forEach(group => {
-          const link = document.createElement('a');
-          link.className = 'group-item';
-          link.href = `video_profesor.html?grupo=${encodeURIComponent(group.id)}`;
-          link.textContent = group.name;
-          list.appendChild(link);
-        });
+
+    async function loadAndDisplayGroups() {
+        const groupListElement = document.getElementById('groupList');
+
+        try {
+            groupListElement.innerHTML = '<p>Cargando grupos...</p>'; 
+
+            const grupos = await getGroups();
+
+            groupListElement.innerHTML = ''; 
+
+            if (grupos.length === 0) {
+                    groupListElement.innerHTML = '<p>No hay grupos registrados todavía.</p>';
+                    return;
+            }
+
+            grupos.forEach(group => {
+                    const link = document.createElement('a');
+                    link.className = 'group-item';
+                    link.href = `video_profesor.html?grupo=${encodeURIComponent(group.id)}`;
+                    link.textContent = group.name; 
+                    groupListElement.appendChild(link);
+            });
+
       } catch (error) {
         console.error('Error al cargar los grupos:', error);
         alert('No se pudieron cargar los grupos.');
@@ -212,27 +218,44 @@
       reader.onload = async function (e) {
         const base64 = e.target.result.split(',')[1];
         try {
-          const response = await fetch('https://TU_API_GATEWAY_URL/crear-usuarios', {
-            method: 'POST',
-            headers: { 'Content-Type': file.type },
-            body: base64
-          });
-          if (response.ok) {
-            const result = await response.json();
-            alert('Usuarios creados correctamente: ' + JSON.stringify(result.mensaje));
-          } else {
-            const error = await response.text();
-            alert('Error al subir archivo: ' + error);
-          }
-        } catch (err) {
-          console.error('Error al enviar archivo:', err);
-          alert('Error al conectar con el servidor');
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+          const response = await createUser(base64, file.type);
+          const result = response.data;
+      if (result.resultados && result.resultados.length > 0) {
+          const successMessages = result.resultados
+              .filter(r => !r.message || !r.message.includes('already exists'))
+              .map(r => `Usuario ${r.name || r.id} creado/actualizado.`);
+          const errorMessages = result.resultados
+              .filter(r => r.message && r.message.includes('already exists'))
+              .map(r => `Error: Usuario ${r.name || r.id} ya existe.`);
 
-    loadGroups();
+          let finalMessage = 'Procesamiento de usuarios finalizado:\n';
+          if (successMessages.length > 0) {
+              finalMessage += '\nCreados/Actualizados:\n' + successMessages.join('\n');
+          }
+          if (errorMessages.length > 0) {
+              finalMessage += '\nErrores (ya existen):\n' + errorMessages.join('\n');
+          }
+          alert(finalMessage);
+      } else {
+          alert('Usuarios creados correctamente: ' + JSON.stringify(result.mensaje));
+      }
+
+    } catch (error) { 
+      console.error('Error al enviar archivo:', error);
+      let errorMessage = 'Error al subir archivo: ';
+      if (error.response) {
+        errorMessage += error.response.data.detail || error.response.data.message || error.response.statusText;
+      } else if (error.request) {
+        errorMessage += 'No se recibió respuesta del servidor.';
+      } else {
+        errorMessage += error.message;
+      }
+      alert(errorMessage);
+    }
+  };
+  reader.readAsDataURL(file);
+});
+ document.addEventListener('DOMContentLoaded', loadAndDisplayGroups);
   </script>
 
 </body>
