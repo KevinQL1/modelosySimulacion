@@ -2,28 +2,24 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mis Videos - Estudiante</title>
+  <title>Administrar Asignaturas</title>
   <link rel="stylesheet" href="../css/header.css">
-  <link rel="stylesheet" href="../css/style-videos.css">
+  <link rel="stylesheet" href="../css/style-asignaturas.css">
 </head>
 <body>
   <header class="main-header">
     <div class="header-left" id="user-info"></div>
     <div class="header-right" id="admin-actions"></div>
   </header>
-
   <div class="container">
-    <div class="breadcrumb" id="breadcrumb">
-      <span class="breadcrumb-item">Inicio</span>
-    </div>
-    
-    <h2>Mis Videos</h2>
-    <div id="videos-grupo"></div>
+    <h2>CRUD de Asignaturas</h2>
+    <div id="asignaturas-crud"></div>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="../connectionBackend/apiConnection.js"></script>
   <script src="../js/header-dinamico.js"></script>
-  <script src="../js/grupo_estu.js"></script>
+  <script src="../js/database-export.js"></script>
+  <script src="../js/asignaturas-admin.js"></script>
 </body>
-</html>
+</html> 

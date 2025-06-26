@@ -2,6 +2,8 @@ const { unmarshall } = require('@aws-sdk/util-dynamodb')
 const DynamoDBAdapter = require('../adapters/dynamoDbAdapter')
 const Group = require('../entities/GroupEntity')
 const logger = require('../../../utils/logger')
+const { v4: uuidv4 } = require('uuid');
+
 module.exports = class GroupService {
     constructor(dynamoDBAdapter) {
         this.dynamoDBAdapter = dynamoDBAdapter || new DynamoDBAdapter()
@@ -46,27 +48,22 @@ module.exports = class GroupService {
 
     async createEntity(groupObject) {
         logger.info('groupObject', groupObject)
-        let groupEntity
-        try {
-            groupEntity = await this.getGroupById(groupObject.id)
-            logger.info('groupEntity', groupEntity)
-        } catch (error) {
-            logger.error(error.message)
-            if (error.message === 'group not exists') {
-                try {
-                    groupEntity = new Group(groupObject)
-                    logger.info('groupEntity', groupEntity)
-                    await this.dynamoDBAdapter.createOrUpdateItem(this.tableName, groupEntity)
-                    return groupEntity
-                } catch (validationError) {
-                    throw new Error(validationError.message)
-                }
-            }
+        // Solo requerimos el nombre y el idCourse, generamos el id automáticamente
+        const name = groupObject.name;
+        const idCourse = groupObject.idCourse;
+        if (!name) throw new Error('name is required');
+        if (!idCourse) throw new Error('idCourse is required');
+        // Verificar si ya existe un grupo con ese nombre en la misma asignatura
+        const allGroups = await this.getAllItems();
+        if (allGroups.some(g => g.name === name && g.idCourse === idCourse)) {
+            throw new Error('the group already exists in this course');
         }
-        if (groupEntity) {
-            throw new Error('the group already exists')
-        }
-        return groupEntity
+        // Generar el id antes de crear la entidad
+        const id = uuidv4();
+        const groupEntity = new Group({ id, name, idCourse });
+        logger.info('groupEntity', groupEntity)
+        await this.dynamoDBAdapter.createOrUpdateItem(this.tableName, groupEntity)
+        return groupEntity;
     }
 
     async updateEntity(groupObject) {

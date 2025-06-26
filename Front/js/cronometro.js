@@ -7,13 +7,12 @@ let editandoActividad = null; // índice de la actividad en edición (null = nin
 const listaActividades = document.getElementById('lista-actividades');
 const btnNuevaActividad = document.getElementById('btn-nueva-actividad');
 const inputVideoId = document.getElementById('input-video-id');
-const btnCargarVideo = document.getElementById('btn-cargar-video');
 const btnExportarExcel = document.getElementById('btn-exportar-excel');
 const feedbackDiv = document.getElementById('feedback');
 
 // YouTube Player API
 let player;
-let currentVideoId = 'Z1MsiD_Isng'; // Valor por defecto para pruebas
+let currentVideoId = ''; // Valor por defecto para pruebas
 const idUser = localStorage.getItem('idUser');
 
 // Funciones de conexión backend
@@ -46,6 +45,10 @@ function onYouTubeIframeAPIReady() {
 }
 
 function crearOActualizarPlayer(videoId) {
+    if (typeof YT === 'undefined' || typeof YT.Player !== 'function') {
+        console.warn('YouTube API no está lista aún');
+        return;
+    }
     if (player) {
         player.loadVideoById(videoId);
     } else {
@@ -61,13 +64,6 @@ function crearOActualizarPlayer(videoId) {
     currentVideoId = videoId;
     cargarActividades();
 }
-
-btnCargarVideo.addEventListener('click', () => {
-    const nuevoId = inputVideoId.value.trim();
-    if (nuevoId) {
-        crearOActualizarPlayer(nuevoId);
-    }
-});
 
 function onPlayerReady(event) {
     // El reproductor está listo
@@ -128,11 +124,14 @@ function renderActividades() {
                         </div>
                     `).join('')}
                 </div>
-                <div class="actividad-cronometro">
-                    <button onclick="iniciarCronometro(${idx})" ${actividad.isRunning ? 'disabled' : ''}>Iniciar</button>
-                    <button onclick="registrarLap(${idx})" ${!actividad.isRunning ? 'disabled' : ''}>Registrar Lap</button>
-                    <button onclick="pararCronometro(${idx})" ${!actividad.isRunning ? 'disabled' : ''}>Parar</button>
-                </div>
+                ${editandoActividad !== idx ? `
+                    <!-- Mostrar botones de cronómetro solo cuando no está en edición -->
+                    <div class="actividad-cronometro">
+                        <button onclick="iniciarCronometro(${idx})" ${actividad.isRunning ? 'disabled' : ''}>Iniciar</button>
+                        <button onclick="registrarLap(${idx})" ${!actividad.isRunning ? 'disabled' : ''}>Registrar Lap</button>
+                        <button onclick="pararCronometro(${idx})" ${!actividad.isRunning ? 'disabled' : ''}>Parar</button>
+                    </div>
+                ` : ''}
             </div>
         `;
         listaActividades.appendChild(card);
@@ -411,4 +410,18 @@ function exportarTiemposAExcel() {
 }
 
 // Cargar actividades al inicio
-window.addEventListener('DOMContentLoaded', cargarActividades);
+window.addEventListener('DOMContentLoaded', () => {
+    if (window.renderHeaderDinamico) renderHeaderDinamico();
+    cargarActividades();
+});
+
+// Leer videoKey de la URL y cargarlo automáticamente
+const urlParams = new URLSearchParams(window.location.search);
+const videoKeyFromUrl = urlParams.get('videoKey');
+if (videoKeyFromUrl) {
+    currentVideoId = videoKeyFromUrl;
+    window.addEventListener('DOMContentLoaded', () => {
+        inputVideoId.value = videoKeyFromUrl;
+        crearOActualizarPlayer(videoKeyFromUrl);
+    });
+}

@@ -187,21 +187,31 @@ module.exports = class DataTimeService {
         logger.info('getActivitiesByUserAndVideo params', { idUser, videoId });
         const params = {
             TableName: this.tableName,
-            FilterExpression: '#idUser = :idUser and #videoId = :videoId',
+            FilterExpression: '#idUser = :idUser',
             ExpressionAttributeNames: {
-                '#idUser': 'idUser',
-                '#videoId': 'videoId'
+                '#idUser': 'idUser'
             },
             ExpressionAttributeValues: {
-                ':idUser': { S: idUser },
-                ':videoId': { S: videoId }
+                ':idUser': { S: idUser }
             }
         }
         logger.info('DynamoDB scan params', params);
         try {
             const response = await this.dynamoDBAdapter.scanItems(params)
             logger.info('DynamoDB scan response', { items: response.Items?.length });
-            return response.Items.map(item => unmarshall(item))
+            // Unmarshall actividades y laps
+            return response.Items.map(item => {
+                const unmarshalled = unmarshall(item);
+                if (Array.isArray(unmarshalled.laps)) {
+                    unmarshalled.laps = unmarshalled.laps.map(lap => {
+                        if (lap && typeof lap === 'object' && (lap.M || lap.S)) {
+                            return unmarshall(lap);
+                        }
+                        return lap;
+                    });
+                }
+                return unmarshalled;
+            });
         } catch (error) {
             logger.error('Error en scanItems DynamoDB', { error });
             throw error;

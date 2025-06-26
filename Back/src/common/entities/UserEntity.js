@@ -3,11 +3,13 @@ module.exports = class UserEntity {
         id,
         name,
         scope,
+        groupId = null,
         createdAt = new Date().toISOString(),
     }) {
         this.id = id
         this.name = name
         this.scope = scope
+        this.groupId = groupId
         this.createdAt = createdAt || createdAt.toISOString()
         this.validate()
     }

@@ -2,10 +2,12 @@ module.exports = class GroupEntity {
     constructor({
         id,
         name,
+        idCourse,
         createdAt = new Date().toISOString(),
     }) {
         this.id = id
         this.name = name
+        this.idCourse = idCourse
         this.createdAt = createdAt || createdAt.toISOString()
         this.validate()
     }
@@ -17,6 +19,10 @@ module.exports = class GroupEntity {
 
         if (this.name === '' || this.name === undefined) {
             throw new Error('name is required')
+        }
+
+        if (this.idCourse === '' || this.idCourse === undefined) {
+            throw new Error('idCourse is required')
         }
     }
 }

@@ -8,7 +8,7 @@ const getGroups = async (event) => {
         const groupService = new GroupService()
 
         const user = tokenVerification(event);
-        if (!user || user.scope !== 'administrador') {
+        if (!user || (user.scope !== 'administrador' && user.scope !== 'estudiante')) {
             logger.error('Usuario no autenticado para obtener grupos');
             return httpResponse.unauthorized(new Error('No tienes permiso para ver los grupos'))(event.requestContext.path);
         }

@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video con Cronómetro y Actividades</title>
     <link rel="stylesheet" href="../css/style-video-cronometro.css">
+    <link rel="stylesheet" href="../css/style-videos.css">
+    <link rel="stylesheet" href="../css/header.css">
 </head>
 <body>
+    <header class="main-header">
+        <div class="header-left" id="user-info"></div>
+        <div class="header-right" id="admin-actions"></div>
+    </header>
+    
     <div class="container">
         <!-- Columna izquierda: video y cargar video -->
         <div id="video-section">
             <div id="video-id-input-container">
-                <input type="text" id="input-video-id" placeholder="Ingresa el ID del video de YouTube" />
-                <button id="btn-cargar-video">Cargar Video</button>
+                <input type="text" id="input-video-id" placeholder="Clave del video de YouTube" readonly />
             </div>
             <div id="video-player-container">
                 <div id="youtube-player"></div>
@@ -34,8 +40,10 @@
 
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="../js/cronometro.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../connectionBackend/apiConnection.js"></script>
+    <script src="../js/header-dinamico.js"></script>
+    <script src="../js/database-export.js"></script>
+    <script src="../js/cronometro.js"></script>
 </body>
 </html>

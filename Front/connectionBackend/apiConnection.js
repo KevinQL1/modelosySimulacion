@@ -8,11 +8,13 @@ const login = (cedula) => {
 };
 
 // Usuarios
-const createUser = (fileBase64, fileType) => {
-    return axios.post(`${BASE_URL}/user/create`, fileBase64, {
+const createUser = (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return axios.post(`${BASE_URL}/user/create`, formData, {
         headers: {
-            'Content-Type': fileType,
-            'Authorization': `Bearer ${getToken()}`
+            'Authorization': `Bearer ${getToken()}`,
+            // 'Content-Type' se gestiona automáticamente por el navegador para FormData
         }
     });
 };
@@ -49,13 +51,7 @@ const getGroups = async () => {
             params
         });
 
-        const groupsData = response.data;
-        
-        if (!Array.isArray(groupsData)) {
-            return []; 
-        }
-
-        return groupsData; 
+        return response;
 };
 
 const deleteGroup = (grupo) => {
@@ -129,5 +125,38 @@ const deleteActivity = (activityId) => {
     return axios.delete(`${BASE_URL}/data-time/activity`, {
         headers: { 'Authorization': `Bearer ${getToken()}` },
         params: { id: activityId }
+    });
+};
+
+const updateUserGroup = (userId, groupId) => {
+    return axios.put(`${BASE_URL}/user/update`, { userId, groupId }, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+};
+
+// Videos
+const createVideo = (videoData) => {
+    return axios.post(`${BASE_URL}/video/create`, videoData, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+};
+
+const getVideosByGroup = (idGroup) => {
+    return axios.get(`${BASE_URL}/video/group`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        params: { idGroup }
+    });
+};
+
+const updateVideo = (videoData) => {
+    return axios.put(`${BASE_URL}/video/update`, videoData, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+};
+
+const deleteVideo = (id) => {
+    return axios.delete(`${BASE_URL}/video/delete`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        params: { id }
     });
 };

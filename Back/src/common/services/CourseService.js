@@ -2,6 +2,7 @@ const { unmarshall } = require('@aws-sdk/util-dynamodb')
 const DynamoDBAdapter = require('../adapters/dynamoDbAdapter')
 const Course = require('../entities/CourseEntity')
 const logger = require('../../../utils/logger')
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = class CourseService {
     constructor(dynamoDBAdapter) {
@@ -47,27 +48,19 @@ module.exports = class CourseService {
 
     async createEntity(courseObject) {
         logger.info('courseObject', courseObject)
-        let courseEntity
-        try {
-            courseEntity = await this.getCourseById(courseObject.id)
-            logger.info('courseEntity', courseEntity)
-        } catch (error) {
-            logger.error(error.message)
-            if (error.message === 'course not exists') {
-                try {
-                    courseEntity = new Course(courseObject)
-                    logger.info('courseEntity', courseEntity)
-                    await this.dynamoDBAdapter.createOrUpdateItem(this.tableName, courseEntity)
-                    return courseEntity
-                } catch (validationError) {
-                    throw new Error(validationError.message)
-                }
-            }
+        // Solo requerimos el nombre, generamos el id automáticamente
+        const name = courseObject.name;
+        if (!name) throw new Error('name is required');
+        // Verificar si ya existe una asignatura con ese nombre
+        const existing = await this.getItemByName(name);
+        if (existing) {
+            throw new Error('the course already exists');
         }
-        if (courseEntity) {
-            throw new Error('the course already exists')
-        }
-        return courseEntity
+        const id = uuidv4();
+        const courseEntity = new Course({ id, name });
+        logger.info('courseEntity', courseEntity)
+        await this.dynamoDBAdapter.createOrUpdateItem(this.tableName, courseEntity)
+        return courseEntity;
     }
 
     async updateEntity(courseObject) {
