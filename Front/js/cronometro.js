@@ -46,7 +46,6 @@ function onYouTubeIframeAPIReady() {
 
 function crearOActualizarPlayer(videoId) {
     if (typeof YT === 'undefined' || typeof YT.Player !== 'function') {
-        console.warn('YouTube API no está lista aún');
         return;
     }
     if (player) {
@@ -70,6 +69,9 @@ function onPlayerReady(event) {
 }
 
 async function cargarActividades() {
+    actividades = [];
+    actividadesAbiertas = [];
+    editandoActividad = null;
     if (!idUser || !currentVideoId) return;
     mostrarSpinner('Cargando actividades...');
     try {
@@ -79,13 +81,14 @@ async function cargarActividades() {
             nombre: act.nameActivity,
             isRunning: false,
             lastLapTime: 0,
-            laps: act.laps || []
+            laps: act.laps || [],
+            videoId: act.videoId // Para depuración
         }));
         actividadesAbiertas = actividades.map((_, idx) => idx); // Abrir todas por defecto
         renderActividades();
         mostrarFeedback('Actividades cargadas', 'success');
     } catch (err) {
-        console.error(err);
+        renderActividades(); // Mostrar vacío si hay error
         mostrarFeedback('Error al cargar actividades del backend', 'error', 4000);
     }
 }
@@ -154,13 +157,15 @@ function renderActividades() {
 
 // Crear nueva actividad
 btnNuevaActividad.addEventListener('click', () => {
-    actividades.push({
+    const nuevaActividad = {
         id: null,
         nombre: '',
         isRunning: false,
         lastLapTime: 0,
-        laps: []
-    });
+        laps: [],
+        videoId: currentVideoId // Para depuración
+    };
+    actividades.push(nuevaActividad);
     editandoActividad = actividades.length - 1;
     actividadesAbiertas.push(editandoActividad);
     renderActividades();
@@ -181,28 +186,17 @@ window.guardarEdicionActividad = async function(idx) {
             // Crear nueva actividad
             mostrarSpinner('Creando actividad...');
             try {
-                console.log('Creando actividad con datos:', {
-                    idUser,
-                    videoId: currentVideoId,
-                    nameActivity: nombre
-                });
-                
                 const res = await createActivity({
                     idUser,
                     videoId: currentVideoId,
                     nameActivity: nombre
                 });
                 
-                console.log('Respuesta del servidor:', res);
-                
                 actividades[idx].id = res.data.id;
                 actividades[idx].nombre = res.data.nameActivity;
                 actividades[idx].laps = res.data.laps || [];
                 mostrarFeedback('Actividad creada', 'success');
             } catch (err) {
-                console.error('Error completo:', err);
-                console.error('Error response:', err.response);
-                
                 let errorMsg = 'Error al crear la actividad en el servidor.';
                 if (err.response && err.response.data) {
                     if (err.response.data.message) {
@@ -222,24 +216,14 @@ window.guardarEdicionActividad = async function(idx) {
             // Actualizar actividad existente
             mostrarSpinner('Actualizando actividad...');
             try {
-                console.log('Actualizando actividad con datos:', {
-                    id: actividades[idx].id,
-                    nameActivity: nombre
-                });
-                
                 const res = await updateActivity({
                     id: actividades[idx].id,
                     nameActivity: nombre
                 });
                 
-                console.log('Respuesta del servidor:', res);
-                
                 actividades[idx].nombre = res.data.nameActivity;
                 mostrarFeedback('Actividad actualizada', 'success');
             } catch (err) {
-                console.error('Error completo:', err);
-                console.error('Error response:', err.response);
-                
                 let errorMsg = 'Error al actualizar la actividad en el servidor.';
                 if (err.response && err.response.data) {
                     if (err.response.data.message) {
@@ -277,14 +261,8 @@ window.eliminarActividad = async function(idx) {
         const actividad = actividades[idx];
         if (actividad.id) {
             mostrarSpinner('Eliminando actividad...');
-            try {
-                await deleteActivity(actividad.id);
-                mostrarFeedback('Actividad eliminada', 'success');
-            } catch (err) {
-                console.error(err);
-                mostrarFeedback('Error al eliminar la actividad en el servidor.', 'error', 4000);
-                return;
-            }
+            await deleteActivity(actividad.id);
+            mostrarFeedback('Actividad eliminada', 'success');
         }
         actividades.splice(idx, 1);
         actividadesAbiertas = actividadesAbiertas.filter(i => i !== idx).map(i => (i > idx ? i - 1 : i));
@@ -299,15 +277,9 @@ window.eliminarLap = async function(idx, lapIdx) {
     const actividad = actividades[idx];
     if (actividad.id) {
         mostrarSpinner('Eliminando lap...');
-        try {
-            const res = await deleteLap(actividad.id, lapIdx);
-            actividades[idx].laps = res.data.laps;
-            mostrarFeedback('Lap eliminado', 'success');
-        } catch (err) {
-            console.error(err);
-            mostrarFeedback('Error al eliminar el lap en el servidor.', 'error', 4000);
-            return;
-        }
+        const res = await deleteLap(actividad.id, lapIdx);
+        actividades[idx].laps = res.data.laps;
+        mostrarFeedback('Lap eliminado', 'success');
     } else {
         actividades[idx].laps.splice(lapIdx, 1);
     }
@@ -334,18 +306,12 @@ window.registrarLap = async function(idx) {
     };
     if (actividades[idx].id) {
         mostrarSpinner('Agregando lap...');
-        try {
-            const res = await addLap({
-                activityId: actividades[idx].id,
-                ...lap
-            });
-            actividades[idx].laps = res.data.laps;
-            mostrarFeedback('Lap agregado', 'success');
-        } catch (err) {
-            console.error(err);
-            mostrarFeedback('Error al agregar el lap en el servidor.', 'error', 4000);
-            return;
-        }
+        const res = await addLap({
+            activityId: actividades[idx].id,
+            ...lap
+        });
+        actividades[idx].laps = res.data.laps;
+        mostrarFeedback('Lap agregado', 'success');
     } else {
         actividades[idx].laps.push(lap);
     }
@@ -412,7 +378,6 @@ function exportarTiemposAExcel() {
 // Cargar actividades al inicio
 window.addEventListener('DOMContentLoaded', () => {
     if (window.renderHeaderDinamico) renderHeaderDinamico();
-    cargarActividades();
 });
 
 // Leer videoKey de la URL y cargarlo automáticamente

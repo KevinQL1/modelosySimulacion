@@ -52,22 +52,36 @@ function renderGrupos() {
       <tbody>
   `;
   grupos.forEach((grupo, idx) => {
-    html += `
-      <tr class="grupo-row" data-grupo-id="${grupo.id}" data-curso-id="${grupo.idCourse}">
-        <td>${grupo.id}</td>
-        <td>${grupo.name}</td>
-        <td>${formatFecha(grupo.createdAt)}</td>
-        <td>
-          <button onclick='editarGrupo(${idx})'>Editar</button>
-          <button onclick='eliminarGrupo("${grupo.name}")'>Eliminar</button>
-          ${(localStorage.getItem('scope') === 'administrador') ? `<button onclick='mostrarGestionarUsuarios("${grupo.id}", event)'>Gestionar estudiantes</button>` : ''}
-        </td>
-      </tr>
-    `;
-    if (grupoSeleccionadoParaGestionar === grupo.id) {
+    if (editIndex === idx) {
       html += `
-        <tr><td colspan="4"><div id="panel-gestionar-${grupo.id}"></div></td></tr>
+        <tr>
+          <td>${grupo.id}</td>
+          <td><input type='text' value='${grupo.name}' id='edit-name'/></td>
+          <td>${formatFecha(grupo.createdAt)}</td>
+          <td>
+            <button onclick='guardarEdicionGrupo(${idx})'>Guardar</button>
+            <button onclick='cancelarEdicionGrupo()'>Cancelar</button>
+          </td>
+        </tr>
       `;
+    } else {
+      html += `
+        <tr class="grupo-row" data-grupo-id="${grupo.id}" data-curso-id="${grupo.idCourse}">
+          <td>${grupo.id}</td>
+          <td>${grupo.name}</td>
+          <td>${formatFecha(grupo.createdAt)}</td>
+          <td>
+            <button onclick='editarGrupo(${idx})'>Editar</button>
+            <button onclick='eliminarGrupo("${grupo.name}")'>Eliminar</button>
+            ${(localStorage.getItem('scope') === 'administrador') ? `<button onclick='mostrarGestionarUsuarios("${grupo.id}", event)'>Gestionar estudiantes</button>` : ''}
+          </td>
+        </tr>
+      `;
+      if (grupoSeleccionadoParaGestionar === grupo.id) {
+        html += `
+          <tr><td colspan="4"><div id="panel-gestionar-${grupo.id}"></div></td></tr>
+        `;
+      }
     }
   });
   html += '</tbody></table>';
@@ -114,23 +128,16 @@ function renderGrupos() {
 // Cargar grupos desde el backend
 async function cargarGrupos() {
   try {
-    console.log('Iniciando carga de grupos...');
     const allGrupos = await getGroups();
-    console.log('Respuesta de getGroups:', allGrupos);
     
     const idCourse = getAsignaturaId();
-    console.log('ID del curso:', idCourse);
     
     grupos = allGrupos.data.filter(g => g.idCourse === idCourse);
-    console.log('Grupos filtrados para el curso:', grupos);
     
     editIndex = null;
     renderGrupos();
     await cargarUsuariosSinGrupo();
   } catch (err) {
-    console.error('Error detallado al cargar grupos:', err);
-    console.error('Error response:', err.response);
-    console.error('Error message:', err.message);
     gruposCrudDiv.innerHTML = '<p style="color:red;">Error al cargar grupos: ' + (err.response?.data?.message || err.message) + '</p>';
   }
 }
@@ -261,13 +268,9 @@ async function renderPanelGestionar(grupoId) {
 // Inicializar
 window.addEventListener('DOMContentLoaded', async () => {
   try {
-    console.log('Inicializando grupos-admin...');
-    
     // Verificar autenticación
     const token = localStorage.getItem('token');
     const scope = localStorage.getItem('scope');
-    console.log('Token:', token ? 'Presente' : 'Ausente');
-    console.log('Scope:', scope);
     
     if (!token) {
       alert('No hay sesión activa. Por favor, inicia sesión.');
@@ -284,7 +287,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (window.renderHeaderDinamico) renderHeaderDinamico();
     
     const idCourse = getAsignaturaId();
-    console.log('ID de la asignatura (courseId):', idCourse);
     
     if (!idCourse) {
       alert('Error: No se encontró la asignatura. Vuelve a la página de asignaturas y selecciona una.');
@@ -294,7 +296,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     await cargarGrupos();
   } catch (error) {
-    console.error('Error en inicialización:', error);
     alert('Error al inicializar la página: ' + error.message);
   }
 }); 

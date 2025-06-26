@@ -31,8 +31,6 @@ function extractYouTubeId(url) {
 // Función principal para exportar toda la base de datos
 async function exportarBaseDeDatos() {
     try {
-        console.log('Iniciando exportación completa de la base de datos...');
-        
         // Mostrar spinner de carga
         mostrarSpinnerExport('Exportando base de datos...');
         
@@ -44,14 +42,6 @@ async function exportarBaseDeDatos() {
             getAllVideos(),
             getAllActivities()
         ]);
-        
-        console.log('Datos obtenidos:', {
-            users: users.data?.length || 0,
-            courses: courses.data?.length || 0,
-            groups: groups.data?.length || 0,
-            videos: videos.data?.length || 0,
-            activities: activities.data?.length || 0
-        });
         
         // Crear el archivo Excel con múltiples hojas
         const wb = XLSX.utils.book_new();
@@ -161,11 +151,9 @@ async function exportarBaseDeDatos() {
         // Descargar el archivo
         XLSX.writeFile(wb, fileName);
         
-        console.log('Exportación completada exitosamente');
         mostrarFeedbackExport('Base de datos exportada exitosamente', 'success');
         
     } catch (error) {
-        console.error('Error durante la exportación:', error);
         mostrarFeedbackExport('Error al exportar la base de datos: ' + error.message, 'error');
     }
 }
@@ -183,7 +171,6 @@ async function getAllVideos() {
                 const videos = await getVideosByGroup(group.id);
                 return videos.data || [];
             } catch (err) {
-                console.warn(`Error obteniendo videos del grupo ${group.id}:`, err);
                 return [];
             }
         });
@@ -196,7 +183,6 @@ async function getAllVideos() {
         
         return { data: allVideos };
     } catch (error) {
-        console.error('Error obteniendo todos los videos:', error);
         return { data: [] };
     }
 }
@@ -219,8 +205,7 @@ async function getAllActivities() {
                 activityPromises.push(
                     getActivities(user.id, video.id)
                         .then(activities => activities.data || [])
-                        .catch(err => {
-                            console.warn(`Error obteniendo actividades del usuario ${user.id} y video ${video.id}:`, err);
+                        .catch(() => {
                             return [];
                         })
                 );
@@ -233,10 +218,8 @@ async function getAllActivities() {
         // Combinar todos los arrays
         activityArrays.forEach(activities => allActivities.push(...activities));
         
-        console.log(`[Export] Total actividades encontradas: ${allActivities.length}`);
         return { data: allActivities };
     } catch (error) {
-        console.error('Error obteniendo todas las actividades:', error);
         return { data: [] };
     }
 }

@@ -50,14 +50,11 @@ function formatFecha(fechaIso) {
 
 async function cargarVideos() {
   try {
-    console.log('Cargando videos para grupo:', idGrupo);
     const res = await getVideosByGroup(idGrupo);
-    console.log('Respuesta de getVideosByGroup:', res);
     videos = res.data || [];
     editIndex = null;
     renderVideos();
   } catch (err) {
-    console.error('Error al cargar videos:', err);
     let errorMessage = 'Error al cargar videos';
     
     if (err.response) {
