@@ -6,7 +6,7 @@ const logger = require('../../utils/logger');
 const getUsers = async (event) => {
   try {
     const user = tokenVerification(event);
-    if (!user || user.scope !== 'administrador') {
+    if (!user || (user.scope !== 'administrador' && user.scope !== 'estudiante')) {
       logger.error('Usuario no autorizado para obtener usuarios');
       return httpResponse.unauthorized(new Error('No tienes permiso para obtener usuarios'))(event.requestContext.path);
     }

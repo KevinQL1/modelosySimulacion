@@ -11,7 +11,6 @@ const getCourse = async (event) => {
 
         const user = tokenVerification(event);
 
-
         let res
         if (id) {
             logger.info('id', id);
@@ -19,10 +18,11 @@ const getCourse = async (event) => {
         } else if (curso) {
             logger.info('curso', curso);
             res = await courseService.getCourse(curso);
-        } else if (user.scope === 'administrador') {
+        } else if (user.scope === 'administrador' || user.scope === 'estudiante') {
             res = await courseService.getAllItems();
+        } else {
+            return httpResponse.unauthorized(new Error('No tienes permiso para obtener cursos'))(event.requestContext.path);
         }
-
 
         logger.info('respuesta', res);
         return httpResponse.ok(res)

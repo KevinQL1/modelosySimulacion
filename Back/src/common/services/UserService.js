@@ -85,4 +85,11 @@ module.exports = class UserService {
         const response = await this.dynamoDBAdapter.queryAllItems(this.tableName)
         return response.Items.map((item) => new User(unmarshall(item)))
     }
+
+    async updateGroupId(userId, groupId) {
+        const user = await this.getUserById(userId);
+        user.groupId = groupId;
+        await this.dynamoDBAdapter.createOrUpdateItem(this.tableName, user);
+        return user;
+    }
 }

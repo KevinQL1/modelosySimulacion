@@ -1,137 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Login</title>
+        <link rel="stylesheet" href="../css/style-login.css" />
+    </head>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Login</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
+    <body>
+        <div class="login-container">
+            <h2>Ingreso</h2>
+            <form id="loginForm">
+                <label for="doc">Documento de Identidad</label>
+                <input
+                    type="text"
+                    id="doc"
+                    name="doc"
+                    placeholder="Ingresa tu documento"
+                    required
+                />
+                <div id="error" class="error"></div>
 
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #e6f0ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+                <button type="submit" class="btn">Ingresar</button>
+            </form>
+        </div>
 
-    .login-container {
-      background-color: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-    }
-
-    h2 {
-      color: #003d99;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #003366;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #003d99;
-      outline: none;
-    }
-
-    .btn {
-      width: 100%;
-      background-color: #003d99;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background 0.3s;
-    }
-
-    .btn:hover {
-      background-color: #0052cc;
-    }
-
-    .error {
-      color: red;
-      font-size: 14px;
-      margin-top: -15px;
-      margin-bottom: 15px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="login-container">
-    <h2>Ingreso</h2>
-    <form id="loginForm">
-      <label for="doc">Documento de Identidad</label>
-      <input type="text" id="doc" name="doc" placeholder="Ingresa tu documento" required>
-      <div id="error" class="error"></div>
-
-      <button type="submit" class="btn">Ingresar</button>
-    </form>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../connectionBackend/apiConnection.js"></script>
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const doc = document.getElementById('doc').value.trim();
-      const errorDiv = document.getElementById('error');
-
-      if (!/^\d+$/.test(doc)) {
-        errorDiv.textContent = "El documento debe ser numérico.";
-        return;
-      }
-
-      errorDiv.textContent = "";
-
-      login(doc)
-        .then(response => {
-          if (response.data?.token) {
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('idUser', response.data.user.id);
-
-            if (response.data.user.scope === "estudiante") {
-              window.location.href = "grupo_estu.html";
-            } else if (response.data.user.scope === "administrador") {
-              window.location.href = "grupos.profe.html";
-            }
-          } else {
-            errorDiv.textContent = "Documento no válido o usuario no encontrado.";
-          }
-        })
-        .catch(err => {
-          console.error('Error en login:', err);
-          errorDiv.textContent = "Error en el servidor o en los datos.";
-        });
-    });
-  </script>
-
-</body>
-
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="../connectionBackend/apiConnection.js"></script>
+        <script src="../js/login.js"></script>
+    </body>
 </html>

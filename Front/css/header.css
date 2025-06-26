@@ -1,0 +1,178 @@
+/* Estilos unificados para el header dinámico */
+
+/* Header principal */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: #e6f0ff;
+  border-bottom: 1px solid #b3c6e0;
+  margin-bottom: 32px;
+}
+
+/* Contenedor izquierdo del header */
+.header-left {
+  font-size: 18px;
+  color: #003366;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Información del usuario */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  font-size: 20px;
+}
+
+.user-role {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
+/* Botón de logout */
+.logout-btn {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+  order: -1; /* Asegura que esté primero */
+}
+
+.logout-btn:hover {
+  background-color: #e60000;
+}
+
+/* Contenedor derecho del header */
+.header-right {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.header-action-btn, .header-right button {
+  background: #003d99;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  min-width: 170px;
+  width: 170px;
+  height: 58px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.header-action-btn:hover, .header-right button:hover {
+  background: #0052cc;
+}
+
+/* Estilos específicos para botones del header - mayor especificidad */
+.main-header .header-right .header-action-btn,
+.main-header .header-right #btn-importar-estudiantes {
+  background: #003d99 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 18px !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  transition: background 0.3s !important;
+  min-width: 170px !important;
+  width: 170px !important;
+  height: 58px !important;
+  margin: 0 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* Botón de exportar específicamente verde */
+.main-header .header-right #btn-exportar-excel {
+  background: #28a745 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 18px !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  transition: background 0.3s !important;
+  min-width: 170px !important;
+  width: 170px !important;
+  height: 58px !important;
+  margin: 0 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+.main-header .header-right .header-action-btn:hover,
+.main-header .header-right #btn-importar-estudiantes:hover {
+  background: #0052cc !important;
+}
+
+.main-header .header-right #btn-exportar-excel:hover {
+  background: #218838 !important;
+}
+
+/* Panel para subir estudiantes (solo para administradores) */
+#panel-subir-estudiantes {
+  background: #f4f8ff;
+  padding: 18px 24px;
+  border-radius: 10px;
+  margin: 18px 0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+#panel-subir-estudiantes h4 {
+  margin-top: 0;
+  color: #003d99;
+}
+
+#panel-subir-estudiantes input[type="file"] {
+  margin: 10px 0;
+  padding: 8px;
+  border: 1px solid #b3c6e0;
+  border-radius: 6px;
+}
+
+#panel-subir-estudiantes button {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+#feedback-excel {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #e0e8f7;
+} 

@@ -2,62 +2,44 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Clase Teórica 1</title>
-  <link rel="stylesheet" href="../css/style_video.css">
+  <title>Video - Estudiante</title>
+  <link rel="stylesheet" href="../css/header.css">
+  <link rel="stylesheet" href="../css/style-video-cronometro.css">
 </head>
 <body>
-  <header>
-    <div class="user-session">
-      <span class="user-icon">👤</span>
-      <button class="logout-btn" id="logout-btn">Cerrar Sesión</button>
-    </div>
+  <header class="main-header">
+    <div class="header-left" id="user-info"></div>
+    <div class="header-right" id="admin-actions"></div>
   </header>
 
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="../connectionBackend/apiConnection.js"></script>
-  
   <div class="container">
-    <h2 class="titulo">Clase teórica 1</h2>
-    <div class="contenido">
-      <div class="listado">
-        <p><strong>Listado de tiempos</strong></p>
-        <ul id="lista-tiempos">
-          <li>
-            <span class="hora">10:20</span>
-            <span class="actividad" contenteditable="false">Definir nombre de actividad</span>
-            <button class="editar" onclick="editarActividad(this)">✏️</button>
-          </li>
-          <li>
-            <span class="hora">10:20</span>
-            <span class="actividad" contenteditable="false">Definir nombre de actividad</span>
-            <button class="editar" onclick="editarActividad(this)">✏️</button>
-          </li>
-          <li>
-            <span class="hora">10:20</span>
-            <span class="actividad" contenteditable="false">Definir nombre de actividad</span>
-            <button class="editar" onclick="editarActividad(this)">✏️</button>
-          </li>
-          <li>
-            <span class="hora">10:20</span>
-            <span class="actividad" contenteditable="false">Definir nombre de actividad</span>
-            <button class="editar" onclick="editarActividad(this)">✏️</button>
-          </li>
-        </ul>
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="breadcrumb-item">Inicio</span>
+    </div>
+    
+    <h2 id="video-title">Video</h2>
+    
+    <div class="video-section">
+      <div id="video-player-container">
+        <!-- El reproductor de YouTube se insertará aquí -->
       </div>
+    </div>
 
-      <div class="video">
-        <!-- Aquí se insertará el video más adelante -->
-        <div class="video-placeholder">
-          <!-- Imagen del ícono de video o rectángulo de fondo -->
-          <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/YouTube_social_white_square_(2017).svg" alt="YouTube" class="video-icon">
-          <div class="video-rect"></div>
+    <div class="actividades-section">
+      <div id="actividades-container">
+        <h3>Actividades del Video</h3>
+        <div id="actividades-lista">
+          <!-- Las actividades se cargarán dinámicamente -->
         </div>
+        <button id="btn-nueva-actividad">Nueva Actividad</button>
+        <button id="btn-exportar-excel">Exportar Excel</button>
       </div>
     </div>
   </div>
 
-  <script src="../js/video.js"></script>
-
-  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../connectionBackend/apiConnection.js"></script>
+  <script src="../js/header-dinamico.js"></script>
+  <script src="../js/cronometro.js"></script>
 </body>
 </html>
