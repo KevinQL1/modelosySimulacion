@@ -187,12 +187,14 @@ module.exports = class DataTimeService {
         logger.info('getActivitiesByUserAndVideo params', { idUser, videoId });
         const params = {
             TableName: this.tableName,
-            FilterExpression: '#idUser = :idUser',
+            FilterExpression: '#idUser = :idUser AND #videoId = :videoId',
             ExpressionAttributeNames: {
-                '#idUser': 'idUser'
+                '#idUser': 'idUser',
+                '#videoId': 'videoId'
             },
             ExpressionAttributeValues: {
-                ':idUser': { S: idUser }
+                ':idUser': { S: idUser },
+                ':videoId': { S: videoId }
             }
         }
         logger.info('DynamoDB scan params', params);
