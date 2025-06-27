@@ -26,16 +26,16 @@ provider:
           Action:
             - dynamodb:*
           Resource:
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-users
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-users/index/name-index
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-data-time
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-data-time/index/nameActivity-index
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-courses
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-courses/index/name-index
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-groups
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/ch-groups/index/name-index
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/Videos
-            - arn:aws:dynamodb:sa-east-1:141729832706:table/Videos/index/idGroup-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-users/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-data-time/index/nameActivity-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-courses/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/ch-groups/index/name-index
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/Videos
+            - arn:aws:dynamodb:sa-east-1:798278983093:table/Videos/index/idGroup-index
 
 # CREACION DE LAS FUNCIONES LAMBDA
 functions:

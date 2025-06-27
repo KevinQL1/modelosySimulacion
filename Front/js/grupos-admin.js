@@ -271,13 +271,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     if (!token) {
       alert('No hay sesión activa. Por favor, inicia sesión.');
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
       return;
     }
     
     if (scope !== 'administrador') {
       alert('Acceso denegado. Solo administradores pueden acceder a esta página.');
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
       return;
     }
     
