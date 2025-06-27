@@ -18,7 +18,7 @@ function renderHeaderDinamico() {
     localStorage.clear();
     sessionStorage.clear();
     // Redirigir al login
-    window.location.href = 'login.html';
+    window.location.href = 'index.html';
   };
   
   // Información del usuario según el rol
