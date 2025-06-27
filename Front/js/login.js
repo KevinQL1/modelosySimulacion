@@ -1,3 +1,5 @@
+import { login } from '../connectionBackend/apiConnection';
+
 document.getElementById('loginForm').addEventListener('submit', function (e) {
   e.preventDefault();
 

@@ -1,3 +1,5 @@
+import { getUsers, getGroups, getCourses, getVideosByGroup } from '../connectionBackend/apiConnection';
+
 // Lógica para gestión de videos del estudiante
 let videos = [];
 let editIndex = null;

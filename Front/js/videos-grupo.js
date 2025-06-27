@@ -1,4 +1,5 @@
-// Lógica para gestión de videos por grupo irá aquí 
+import { getVideosByGroup, createVideo, updateVideo, deleteVideo } from '../connectionBackend/apiConnection';
+
 const urlParams = new URLSearchParams(window.location.search);
 const idGrupo = urlParams.get('idGrupo');
 const idCourse = urlParams.get('idCourse');

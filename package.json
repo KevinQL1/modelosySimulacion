@@ -4,7 +4,10 @@
   "description": "This is an application that simulates the times of each video available to the user.",
   "main": "handler.js",
   "scripts": {
-    "deploy": "serverless deploy --verbose"
+    "deploy": "serverless deploy --verbose",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "author": "Kevin Quintero",
   "license": "ISC",
@@ -12,10 +15,14 @@
     "@aws-lambda-powertools/logger": "^2.22.0",
     "@aws-sdk/client-dynamodb": "^3.830.0",
     "@aws-sdk/util-dynamodb": "^3.830.0",
+    "axios": "^1.10.0",
     "busboy": "^1.6.0",
     "jsonwebtoken": "^9.0.2",
     "lambda-multipart-parser": "^1.0.1",
     "uuid": "^9.0.1",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
   }
 }

@@ -1,3 +1,5 @@
+import { createUser } from '../connectionBackend/apiConnection';
+
 // Header dinámico reutilizable
 function renderHeaderDinamico() {
   const userInfoDiv = document.getElementById('user-info');

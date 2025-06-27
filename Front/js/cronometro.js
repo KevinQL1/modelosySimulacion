@@ -1,3 +1,5 @@
+import { getActivities, createActivity, addLap, deleteLap, deleteActivity, updateActivity } from '../connectionBackend/apiConnection';
+
 // Estructura principal para todas las actividades del usuario en el video actual
 let actividades = [];
 let actividadesAbiertas = []; // array de índices de actividades abiertas

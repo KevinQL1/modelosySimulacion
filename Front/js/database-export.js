@@ -1,6 +1,8 @@
 // Funcionalidad de exportación completa de la base de datos
 // Este archivo debe ser incluido en todas las páginas que tengan el botón "Exportar DB"
 
+import { getUsers, getCourses, getGroups, getVideosByGroup, getActivities } from '../connectionBackend/apiConnection';
+
 // Función para obtener todos los campos únicos de un array de objetos
 function getAllKeys(arr) {
     const keys = new Set();

@@ -1,4 +1,5 @@
-const BASE_URL = 'https://8lbs9ozhwh.execute-api.sa-east-1.amazonaws.com';
+import axios from "axios";
+const BASE_URL = 'https://htjs2tcinl.execute-api.sa-east-1.amazonaws.com';
 
 const getToken = () => localStorage.getItem('token');
 
@@ -44,14 +45,14 @@ const createGroup = (groupData) => {
 };
 
 const getGroups = async () => {
-        const params = {}; 
+    const params = {};
 
-        const response = await axios.get(`${BASE_URL}/group/all`, { 
-            headers: { 'Authorization': `Bearer ${getToken()}` },
-            params
-        });
+    const response = await axios.get(`${BASE_URL}/group/all`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` },
+        params
+    });
 
-        return response;
+    return response;
 };
 
 const deleteGroup = (grupo) => {
@@ -159,4 +160,28 @@ const deleteVideo = (id) => {
         headers: { 'Authorization': `Bearer ${getToken()}` },
         params: { id }
     });
+};
+
+export {
+    login,
+    createUser,
+    getUsers,
+    deleteUser,
+    createGroup,
+    getGroups,
+    deleteGroup,
+    createCourse,
+    getCourses,
+    deleteCourse,
+    createActivity,
+    updateActivity,
+    getActivities,
+    addLap,
+    deleteLap, 
+    deleteActivity, 
+    updateUserGroup,
+    createVideo,
+    getVideosByGroup, 
+    updateVideo, 
+    deleteVideo
 };

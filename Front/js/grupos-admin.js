@@ -1,7 +1,4 @@
-// Lógica para CRUD de grupos irá aquí 
-
-// CRUD de grupos
-// Requiere que apiConnection.js esté cargado globalmente
+import { getGroups, createGroup, deleteGroup, getUsers, updateUserGroup } from '../connectionBackend/apiConnection';
 
 const gruposCrudDiv = document.getElementById('grupos-crud');
 let grupos = [];

@@ -1,9 +1,7 @@
-// Lógica para CRUD de asignaturas irá aquí 
-
-// CRUD de asignaturas (cursos)
-// Requiere que apiConnection.js esté cargado globalmente
+import { getCourses, createCourse, deleteCourse } from '../connectionBackend/apiConnection';
 
 const asignaturasCrudDiv = document.getElementById('asignaturas-crud');
+
 let cursos = [];
 let editIndex = null;
 
