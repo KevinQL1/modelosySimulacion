@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = 'https://htjs2tcinl.execute-api.sa-east-1.amazonaws.com';
+const BASE_URL = 'https://xewm8vrqge.execute-api.sa-east-1.amazonaws.com';
 
 const getToken = () => localStorage.getItem('token');
 

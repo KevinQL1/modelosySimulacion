@@ -117,7 +117,7 @@ function renderGrupos() {
       if (e.target.tagName === 'BUTTON') return;
       const grupoId = this.getAttribute('data-grupo-id');
       const cursoId = this.getAttribute('data-curso-id');
-      window.location.href = `../html/videos-grupo.html?idGrupo=${grupoId}&idCourse=${cursoId}`;
+      window.location.href = `videos-grupo.html?idGrupo=${grupoId}&idCourse=${cursoId}`;
     });
   });
 }

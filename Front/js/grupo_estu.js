@@ -87,19 +87,22 @@ async function obtenerGrupoEstudiante() {
     console.log('Buscando grupo para estudiante:', userId);
     
     // Primero obtener la información del usuario para ver su groupId
-    const user = await getUsers(userId, null);
-    console.log('Usuario obtenido:', user);
-        
-    if (!user) {
+    const users = await getUsers();
+    console.log('Usuarios obtenidos:', users);
+    
+    const currentUser = users.data.find(user => user.id === userId);
+    console.log('Usuario actual:', currentUser);
+    
+    if (!currentUser) {
       throw new Error('No se encontró información del usuario');
     }
     
-    if (!user.groupId) {
+    if (!currentUser.groupId) {
       throw new Error('Este estudiante no tiene un grupo asignado');
     }
     
     // Ahora obtener todos los grupos y encontrar el grupo específico
-    const groups = await getGroups(user.groupId);
+    const groups = await getGroups();
     console.log('Grupos obtenidos:', groups);
     
     const foundGroup = groups.data.find(group => group.id === currentUser.groupId);
