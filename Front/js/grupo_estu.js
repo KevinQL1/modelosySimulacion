@@ -84,15 +84,12 @@ async function verificarEstudiante() {
 async function obtenerGrupoEstudiante() {
   try {
     const userId = localStorage.getItem('idUser');
-    console.log('Buscando grupo para estudiante:', userId);
-    
+
     // Primero obtener la información del usuario para ver su groupId
     const users = await getUsers();
-    console.log('Usuarios obtenidos:', users);
     
     const currentUser = users.data.find(user => user.id === userId);
-    console.log('Usuario actual:', currentUser);
-    
+
     if (!currentUser) {
       throw new Error('No se encontró información del usuario');
     }
@@ -103,10 +100,8 @@ async function obtenerGrupoEstudiante() {
     
     // Ahora obtener todos los grupos y encontrar el grupo específico
     const groups = await getGroups();
-    console.log('Grupos obtenidos:', groups);
     
     const foundGroup = groups.data.find(group => group.id === currentUser.groupId);
-    console.log('Grupo encontrado:', foundGroup);
     
     if (!foundGroup) {
       throw new Error('No se encontró el grupo asignado para este estudiante');
@@ -179,11 +174,8 @@ async function cargarVideos() {
       throw new Error('No se pudo obtener la información del grupo');
     }
 
-    console.log('Cargando videos para grupo:', userGroup.id);
     const res = await getVideosByGroup(userGroup.id);
-    console.log('Respuesta de getVideosByGroup:', res);
     videos = res.data || [];
-    console.log('Videos cargados:', videos);
     editIndex = null;
     renderVideos();
   } catch (err) {

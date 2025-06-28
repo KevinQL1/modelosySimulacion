@@ -14,13 +14,13 @@ const getGroups = async (event) => {
         }
 
         const res = await groupService.getAllItems();
-        logger.info('Grupos obtenidos de la DB:', res)
+        logger.info(`Grupos obtenidos de la DB: ${JSON.stringify(res)}`);
 
         return httpResponse.ok(res)
     } catch (error) {
-        logger.error('Error creating group', error)
+        logger.error('Error obtain group', error)
         return httpResponse.badRequest(
-            new Error('Error creating group: ' + error.message)
+            new Error('Error obtain group: ' + error.message)
         )(event.requestContext.path)
     }
 }

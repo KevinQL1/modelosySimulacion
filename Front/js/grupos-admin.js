@@ -1,4 +1,4 @@
-import { getGroups, createGroup, deleteGroup, getUsers, updateUserGroup } from '../connectionBackend/apiConnection';
+import { getGroups, createGroup, deleteGroup, getUsers, updateUserGroup, getVideosByGroup } from '../connectionBackend/apiConnection';
 
 const gruposCrudDiv = document.getElementById('grupos-crud');
 let grupos = [];
@@ -69,7 +69,7 @@ function renderGrupos() {
           <td>${formatFecha(grupo.createdAt)}</td>
           <td>
             <button onclick='editarGrupo(${idx})'>Editar</button>
-            <button onclick='eliminarGrupo("${grupo.name}")'>Eliminar</button>
+            <button onclick='eliminarGrupo("${grupo.name}", "${grupo.id}")'>Eliminar</button>
             ${(localStorage.getItem('scope') === 'administrador') ? `<button onclick='mostrarGestionarUsuarios("${grupo.id}", event)'>Gestionar estudiantes</button>` : ''}
           </td>
         </tr>
@@ -112,7 +112,7 @@ function renderGrupos() {
 
   // Redirección a videos-grupo.html al hacer clic en una fila de grupo
   document.querySelectorAll('.grupo-row').forEach(row => {
-    row.addEventListener('click', function(e) {
+    row.addEventListener('click', function (e) {
       // Evitar redirección si se hace clic en un botón
       if (e.target.tagName === 'BUTTON') return;
       const grupoId = this.getAttribute('data-grupo-id');
@@ -126,11 +126,11 @@ function renderGrupos() {
 async function cargarGrupos() {
   try {
     const allGrupos = await getGroups();
-    
+
     const idCourse = getAsignaturaId();
-    
+
     grupos = allGrupos.data.filter(g => g.idCourse === idCourse);
-    
+
     editIndex = null;
     renderGrupos();
     await cargarUsuariosSinGrupo();
@@ -140,9 +140,25 @@ async function cargarGrupos() {
 }
 
 // Eliminar grupo
-window.eliminarGrupo = async function(nombre) {
+window.eliminarGrupo = async function (nombre, id) {
   if (!confirm('¿Eliminar este grupo?')) return;
   try {
+    const user = await getUsers();
+    const usuariosEnGrupo = user.data.filter(u => u.groupId === id);
+
+    if (usuariosEnGrupo.length > 0) {
+      alert('No se puede eliminar el grupo porque hay estudiantes asociados a él.');
+      return;
+    }
+
+    const videos = await getVideosByGroup(id);
+    const videoExiste = videos.data && videos.data.length > 0;
+
+    if (videoExiste) {
+      alert('No se puede eliminar el grupo porque hay videos asociados a él.');
+      return;
+    }
+
     await deleteGroup(nombre);
     await cargarGrupos();
   } catch (err) {
@@ -151,13 +167,13 @@ window.eliminarGrupo = async function(nombre) {
 };
 
 // Editar grupo
-window.editarGrupo = function(idx) {
+window.editarGrupo = function (idx) {
   editIndex = idx;
   renderGrupos();
 };
 
 // Guardar edición
-window.guardarEdicionGrupo = async function(idx) {
+window.guardarEdicionGrupo = async function (idx) {
   const name = document.getElementById('edit-name').value.trim();
   const idCourse = getAsignaturaId();
   try {
@@ -170,7 +186,7 @@ window.guardarEdicionGrupo = async function(idx) {
   }
 };
 
-window.cancelarEdicionGrupo = function() {
+window.cancelarEdicionGrupo = function () {
   editIndex = null;
   renderGrupos();
 };
@@ -186,13 +202,13 @@ async function cargarUsuariosSinGrupo() {
   }
 }
 
-window.mostrarGestionarUsuarios = async function(grupoId, event) {
+window.mostrarGestionarUsuarios = async function (grupoId, event) {
   event.stopPropagation();
   grupoSeleccionadoParaGestionar = grupoId;
   renderGrupos();
 };
 
-window.cerrarGestionarUsuarios = function() {
+window.cerrarGestionarUsuarios = function () {
   grupoSeleccionadoParaGestionar = null;
   renderGrupos();
 };
@@ -248,14 +264,14 @@ async function renderPanelGestionar(grupoId) {
   const selectAll = panel.querySelector(`#select-all-estudiantes-${grupoId}`);
   const checkboxes = panel.querySelectorAll('input[name="estudiantes"]');
   if (selectAll) {
-    selectAll.addEventListener('change', function() {
+    selectAll.addEventListener('change', function () {
       checkboxes.forEach(cb => cb.checked = selectAll.checked);
     });
     // Si todos están seleccionados al abrir, marca el checkbox "Seleccionar todos"
     selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
     // Si se desmarca alguno manualmente, desmarca "Seleccionar todos"
     checkboxes.forEach(cb => {
-      cb.addEventListener('change', function() {
+      cb.addEventListener('change', function () {
         selectAll.checked = Array.from(checkboxes).every(cb => cb.checked);
       });
     });
@@ -268,29 +284,29 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Verificar autenticación
     const token = localStorage.getItem('token');
     const scope = localStorage.getItem('scope');
-    
+
     if (!token) {
       alert('No hay sesión activa. Por favor, inicia sesión.');
       window.location.href = 'index.html';
       return;
     }
-    
+
     if (scope !== 'administrador') {
       alert('Acceso denegado. Solo administradores pueden acceder a esta página.');
       window.location.href = 'index.html';
       return;
     }
-    
+
     if (window.renderHeaderDinamico) renderHeaderDinamico();
-    
+
     const idCourse = getAsignaturaId();
-    
+
     if (!idCourse) {
       alert('Error: No se encontró la asignatura. Vuelve a la página de asignaturas y selecciona una.');
       window.location.href = 'asignaturas-admin.html';
       return;
     }
-    
+
     await cargarGrupos();
   } catch (error) {
     alert('Error al inicializar la página: ' + error.message);

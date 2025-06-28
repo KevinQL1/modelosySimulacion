@@ -158,7 +158,7 @@ function renderVideos() {
       const videoId = this.getAttribute('data-video-id');
       const videoKey = this.getAttribute('data-video-key');
       window.location.href = `video-cronometro.html?videoId=${videoId}&videoKey=${videoKey}&idGrupo=${idGrupo}`;
-    });
+    }, { passive: true });
   });
 }
 

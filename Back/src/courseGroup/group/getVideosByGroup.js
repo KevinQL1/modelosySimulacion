@@ -6,8 +6,8 @@ const logger = require('../../../utils/logger');
 const getVideosByGroup = async (event) => {
   try {
     const idGroup = event.queryStringParameters?.idGroup;
-    logger.info('ID de grupo obtenido', idGroup);
-    
+    logger.info(`ID de grupo obtenido ${JSON.stringify(idGroup)}`);
+
     if (!idGroup) {
       return httpResponse.badRequest(new Error('idGroup es requerido'))(event.requestContext.path);
     }
@@ -19,8 +19,8 @@ const getVideosByGroup = async (event) => {
     }
 
     const videos = await videoService.getVideosByGroup(idGroup);
-    
-    logger.info('Videos obtenidos correctamente', { count: videos.length });
+
+    logger.info(`IVideos obtenidos correctamente ${JSON.stringify(videos)}`);
     return httpResponse.ok(videos);
   } catch (err) {
     logger.error('Error obteniendo videos', err);

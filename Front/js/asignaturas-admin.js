@@ -1,4 +1,4 @@
-import { getCourses, createCourse, deleteCourse } from '../connectionBackend/apiConnection';
+import { getCourses, createCourse, deleteCourse, getGroups } from '../connectionBackend/apiConnection';
 
 const asignaturasCrudDiv = document.getElementById('asignaturas-crud');
 
@@ -52,7 +52,7 @@ function renderCursos() {
           <td>${formatFecha(curso.createdAt)}</td>
           <td>
             <button onclick='event.stopPropagation(); editarCurso(${idx})'>Editar</button>
-            <button onclick='event.stopPropagation(); eliminarCurso("${curso.name}")'>Eliminar</button>
+            <button onclick='event.stopPropagation(); eliminarCurso("${curso.name}", "${curso.id}")'>Eliminar</button>
           </td>
         </tr>
       `;
@@ -91,9 +91,17 @@ async function cargarCursos() {
 }
 
 // Eliminar curso
-window.eliminarCurso = async function(nombre) {
+window.eliminarCurso = async function (nombre, id) {
   if (!confirm('¿Eliminar esta asignatura?')) return;
   try {
+    const group = await getGroups();
+    const grupoEnAsginatura = group.data.filter(u => u.idCourse == id);
+
+    if (grupoEnAsginatura.length > 0) {
+      alert('No se puede eliminar la asginatura porque hay grupos asociados a él.');
+      return;
+    }
+    
     await deleteCourse(nombre);
     await cargarCursos();
   } catch (err) {
@@ -102,13 +110,13 @@ window.eliminarCurso = async function(nombre) {
 };
 
 // Editar curso
-window.editarCurso = function(idx) {
+window.editarCurso = function (idx) {
   editIndex = idx;
   renderCursos();
 };
 
 // Guardar edición
-window.guardarEdicionCurso = async function(idx) {
+window.guardarEdicionCurso = async function (idx) {
   const name = document.getElementById('edit-name').value.trim();
   try {
     // El backend no tiene update, así que eliminamos y creamos
@@ -120,13 +128,13 @@ window.guardarEdicionCurso = async function(idx) {
   }
 };
 
-window.cancelarEdicionCurso = function() {
+window.cancelarEdicionCurso = function () {
   editIndex = null;
   renderCursos();
 };
 
 // Redirigir a grupos de la asignatura
-window.redirigirAGrupos = function(id) {
+window.redirigirAGrupos = function (id) {
   window.location.href = `grupos-admin.html?id=${id}`;
 };
 
